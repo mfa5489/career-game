@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나는 경찰이다 🚔</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --secondary: #2e6da4;
+    --accent: #f0a500;
+    --danger: #c0392b;
+    --success: #27ae60;
+    --bg: #0d1b2a;
+    --card: #1e2d3d;
+    --text: #e8f0fe;
+    --subtext: #a0b4c8;
+    --border: #2e4a6a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display:none; min-height:100vh; }
+  .screen.active { display:flex; flex-direction:column; }
+
+  /* ── TITLE SCREEN ── */
+  #screen-title {
+    align-items:center; justify-content:center;
+    background: linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 100%);
+    text-align:center; padding:40px 20px;
+  }
+  #screen-title .badge {
+    font-size:80px; margin-bottom:20px; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+  #screen-title h1 { font-size:2.8rem; color:var(--accent); margin-bottom:10px; text-shadow:0 0 20px rgba(240,165,0,0.5); }
+  #screen-title p  { color:var(--subtext); margin-bottom:40px; font-size:1.1rem; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #e09000);
+    color:#000; border:none; padding:16px 48px;
+    font-size:1.2rem; font-weight:700; border-radius:50px;
+    cursor:pointer; transition:all .3s;
+    box-shadow:0 4px 20px rgba(240,165,0,0.4);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(240,165,0,0.6); }
+
+  /* ── PATH SCREEN ── */
+  #screen-path { padding:30px 20px; }
+  #screen-path h2 { color:var(--accent); font-size:1.6rem; text-align:center; margin-bottom:8px; }
+  #screen-path p  { color:var(--subtext); text-align:center; margin-bottom:30px; }
+  .path-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; max-width:900px; margin:0 auto; }
+  .path-card {
+    background:var(--card); border:2px solid var(--border);
+    border-radius:16px; padding:24px; cursor:pointer; transition:all .3s;
+  }
+  .path-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 8px 24px rgba(240,165,0,0.2); }
+  .path-card .icon { font-size:2.5rem; margin-bottom:10px; }
+  .path-card h3   { color:var(--accent); margin-bottom:8px; }
+  .path-card p    { color:var(--subtext); font-size:.9rem; line-height:1.5; }
+  .path-card .tag { display:inline-block; background:rgba(46,109,164,.3); color:#7ec8e3; font-size:.75rem; padding:3px 10px; border-radius:20px; margin-top:8px; }
+
+  /* ── MAIN GAME SCREEN ── */
+  #screen-game { flex-direction:row; min-height:100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width:260px; min-width:260px; background:var(--card);
+    border-right:1px solid var(--border); padding:20px; overflow-y:auto;
+  }
+  .sidebar h2 { color:var(--accent); font-size:1rem; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .stat-row { margin-bottom:12px; }
+  .stat-row label { font-size:.8rem; color:var(--subtext); display:flex; justify-content:space-between; margin-bottom:4px; }
+  .stat-bar { height:8px; background:#1a2a3a; border-radius:4px; overflow:hidden; }
+  .stat-fill { height:100%; border-radius:4px; transition:width .5s; }
+  .stat-fill.health  { background:linear-gradient(90deg,#27ae60,#2ecc71); }
+  .stat-fill.stress  { background:linear-gradient(90deg,#e74c3c,#c0392b); }
+  .stat-fill.grade   { background:linear-gradient(90deg,#3498db,#2980b9); }
+  .stat-fill.network { background:linear-gradient(90deg,#9b59b6,#8e44ad); }
+  .stat-fill.justice { background:linear-gradient(90deg,#f39c12,#e67e22); }
+
+  .finance-box {
+    background:#152030; border:1px solid var(--border); border-radius:10px;
+    padding:12px; margin-top:16px;
+  }
+  .finance-box h3 { color:var(--accent); font-size:.85rem; margin-bottom:8px; }
+  .finance-row { display:flex; justify-content:space-between; font-size:.8rem; margin-bottom:4px; }
+  .finance-row .label { color:var(--subtext); }
+  .finance-row .value { color:var(--text); font-weight:700; }
+  .finance-row .value.green { color:#2ecc71; }
+  .finance-row .value.red   { color:#e74c3c; }
+
+  .year-badge {
+    background:linear-gradient(135deg,var(--secondary),var(--primary));
+    border-radius:10px; padding:10px; margin-top:16px; text-align:center;
+  }
+  .year-badge .yr  { font-size:1.4rem; font-weight:700; color:var(--accent); }
+  .year-badge .sub { font-size:.75rem; color:var(--subtext); }
+
+  .rank-badge {
+    background:rgba(240,165,0,.1); border:1px solid var(--accent);
+    border-radius:8px; padding:8px; margin-top:10px; text-align:center;
+    font-size:.85rem; color:var(--accent);
+  }
+
+  /* Main content */
+  .main-content {
+    flex:1; padding:24px; overflow-y:auto; max-width:760px;
+  }
+  .chapter-header {
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    border-radius:16px; padding:20px 24px; margin-bottom:24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .chapter-header .icon { font-size:2.5rem; }
+  .chapter-header h2   { font-size:1.4rem; color:var(--accent); }
+  .chapter-header p    { font-size:.9rem; color:var(--subtext); margin-top:4px; }
+
+  /* Event card */
+  .event-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:24px; margin-bottom:20px;
+    animation:fadeIn .4s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .event-card .event-id   { font-size:.7rem; color:#4a6a8a; margin-bottom:8px; }
+  .event-card h3          { color:var(--accent); font-size:1.1rem; margin-bottom:12px; }
+  .event-card .desc       { color:var(--subtext); line-height:1.7; margin-bottom:20px; font-size:.95rem; }
+
+  /* Media popup inline */
+  .media-container { margin-bottom:20px; border-radius:12px; overflow:hidden; }
+  .media-container video,
+  .media-container img { width:100%; border-radius:12px; }
+
+  /* Choices */
+  .choices { display:flex; flex-direction:column; gap:10px; }
+  .choice-btn {
+    background:#152030; border:2px solid var(--border);
+    color:var(--text); padding:14px 18px; border-radius:12px;
+    cursor:pointer; text-align:left; transition:all .2s; font-size:.9rem;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .choice-btn:hover { border-color:var(--accent); background:#1e3050; transform:translateX(4px); }
+  .choice-btn .effects-preview { font-size:.75rem; color:#4a9a7a; white-space:nowrap; }
+
+  /* Result */
+  .result-box {
+    background:linear-gradient(135deg,#152030,#1a2d40);
+    border:1px solid var(--success); border-radius:12px; padding:20px;
+    margin-top:16px; animation:fadeIn .3s;
+  }
+  .result-box h4   { color:var(--success); margin-bottom:10px; }
+  .result-box p    { color:var(--subtext); line-height:1.6; margin-bottom:16px; }
+  .result-effects  { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .effect-chip {
+    padding:4px 12px; border-radius:20px; font-size:.8rem; font-weight:700;
+  }
+  .effect-chip.pos { background:rgba(39,174,96,.2); color:#2ecc71; border:1px solid #27ae60; }
+  .effect-chip.neg { background:rgba(192,57,43,.2); color:#e74c3c; border:1px solid #c0392b; }
+  .effect-chip.neu { background:rgba(52,152,219,.2); color:#3498db; border:1px solid #2980b9; }
+
+  /* Next button */
+  .btn-next {
+    background:var(--secondary); color:white; border:none;
+    padding:12px 32px; border-radius:8px; cursor:pointer;
+    font-size:.95rem; font-weight:600; transition:all .2s;
+  }
+  .btn-next:hover { background:#3a80ba; transform:translateY(-1px); }
+
+  /* Year summary */
+  .year-summary {
+    background:linear-gradient(135deg,#1a3010,#0d2a1a);
+    border:2px solid var(--success); border-radius:16px; padding:24px;
+    margin-bottom:20px; animation:fadeIn .4s;
+  }
+  .year-summary h3 { color:var(--success); font-size:1.2rem; margin-bottom:16px; }
+  .summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .summary-item { background:rgba(0,0,0,.2); border-radius:8px; padding:10px; text-align:center; }
+  .summary-item .s-val { font-size:1.3rem; font-weight:700; color:var(--accent); }
+  .summary-item .s-lab { font-size:.75rem; color:var(--subtext); }
+
+  /* Branch screen */
+  #screen-branch { padding:40px 20px; align-items:center; background:linear-gradient(135deg,#0d1b2a,#1a2a3a); }
+  #screen-branch h2 { color:var(--accent); font-size:2rem; text-align:center; margin-bottom:8px; }
+  #screen-branch p  { color:var(--subtext); text-align:center; margin-bottom:40px; font-size:1.05rem; }
+  .branch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; max-width:1000px; }
+  .branch-card {
+    background:var(--card); border:2px solid var(--border);
+    border-radius:16px; padding:20px; cursor:pointer; transition:all .3s; position:relative;
+  }
+  .branch-card:hover { border-color:var(--accent); transform:translateY(-4px); }
+  .branch-card.locked { opacity:.4; cursor:not-allowed; }
+  .branch-card .b-icon { font-size:2rem; margin-bottom:8px; }
+  .branch-card h3 { color:var(--accent); font-size:.95rem; margin-bottom:6px; }
+  .branch-card p  { color:var(--subtext); font-size:.8rem; line-height:1.4; }
+  .branch-card .cond { font-size:.7rem; color:#4a9a7a; margin-top:8px; }
+  .branch-card .locked-msg { font-size:.7rem; color:#e74c3c; margin-top:8px; }
+  .branch-card .unlock-badge {
+    position:absolute; top:10px; right:10px;
+    background:var(--success); color:white; font-size:.65rem;
+    padding:2px 8px; border-radius:10px;
+  }
+
+  /* Ending screen */
+  #screen-ending { align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+  .ending-card { max-width:600px; }
+  .ending-card .e-icon { font-size:100px; margin-bottom:20px; }
+  .ending-card h2 { font-size:2rem; color:var(--accent); margin-bottom:12px; }
+  .ending-card p  { color:var(--subtext); line-height:1.7; margin-bottom:30px; font-size:1.05rem; }
+  .ending-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:30px; }
+  .ending-stat  { background:var(--card); border-radius:10px; padding:12px; }
+  .ending-stat .val { font-size:1.4rem; font-weight:700; color:var(--accent); }
+  .ending-stat .lbl { font-size:.75rem; color:var(--subtext); }
+  .btn-restart {
+    background:var(--secondary); color:white; border:none;
+    padding:14px 40px; border-radius:50px; cursor:pointer;
+    font-size:1.1rem; font-weight:700; margin:8px; transition:all .2s;
+  }
+  .btn-restart:hover { background:#3a80ba; }
+
+  /* Toast */
+  .toast {
+    position:fixed; bottom:30px; right:30px;
+    background:#1e2d3d; border:1px solid var(--accent);
+    color:var(--text); padding:12px 20px; border-radius:10px;
+    font-size:.9rem; z-index:1000; animation:slideUp .3s;
+    max-width:300px;
+  }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+  /* Progress bar top */
+  .progress-top {
+    height:4px; background:var(--border); position:relative; overflow:hidden;
+  }
+  .progress-top-fill {
+    height:100%; background:linear-gradient(90deg,var(--accent),var(--secondary));
+    transition:width .5s;
+  }
+
+  /* Responsive */
+  @media(max-width:768px) {
+    #screen-game { flex-direction:column; }
+    .sidebar { width:100%; min-width:unset; border-right:none; border-bottom:1px solid var(--border); }
+    .summary-grid { grid-template-columns:1fr 1fr; }
+    .branch-grid  { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1: TITLE
+═══════════════════════════════════════════ -->
+<div id="screen-title" class="screen active">
+  <div class="badge">🚔</div>
+  <h1>나는 경찰이다</h1>
+  <p>경찰 생활안전 직군 · 5년 타임라인<br>당신의 선택이 경찰 인생을 결정합니다</p>
+  <button class="btn-primary" onclick="showScreen('screen-path')">게임 시작 🚀</button>
+  <div style="margin-top:30px; color:#2e4a6a; font-size:.8rem;">
+    v2.0 · GitHub: mfa5489/career-game · 경찰 생활안전 1직군
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2: PATH SELECTION
+═══════════════════════════════════════════ -->
+<div id="screen-path" class="screen">
+  <div style="padding:30px 20px; max-width:960px; margin:0 auto; width:100%;">
+    <h2 style="color:var(--accent); font-size:1.6rem; text-align:center; margin-bottom:8px;">🚪 경찰관 진입 경로 선택</h2>
+    <p style="color:var(--subtext); text-align:center; margin-bottom:30px;">어떤 경로로 경찰관이 되겠습니까?</p>
+    <div class="path-grid" id="path-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 3: MAIN GAME
+═══════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <div class="progress-top"><div class="progress-top-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>📊 캐릭터 정보</h2>
+    <div class="year-badge">
+      <div class="yr" id="sb-year">1년차</div>
+      <div class="sub" id="sb-age">24세</div>
+    </div>
+    <div class="rank-badge" id="sb-rank">순경 1호봉</div>
+
+    <div style="margin-top:20px;">
+      <div class="stat-row">
+        <label><span>💪 체력</span><span id="sv-health">70</span></label>
+        <div class="stat-bar"><div class="stat-fill health" id="sf-health" style="width:70%"></div></div>
+      </div>
+      <div class="stat-row">
+        <label><span>😰 스트레스</span><span id="sv-stress">20</span></label>
+        <div class="stat-bar"><div class="stat-fill stress" id="sf-stress" style="width:20%"></div></div>
+      </div>
+      <div class="stat-row">
+        <label><span>📚 성적</span><span id="sv-grade">60</span></label>
+        <div class="stat-bar"><div class="stat-fill grade" id="sf-grade" style="width:60%"></div></div>
+      </div>
+      <div class="stat-row">
+        <label><span>🤝 인맥</span><span id="sv-network">30</span></label>
+        <div class="stat-bar"><div class="stat-fill network" id="sf-network" style="width:30%"></div></div>
+      </div>
+      <div class="stat-row">
+        <label><span>⚖️ 정의감</span><span id="sv-justice">70</span></label>
+        <div class="stat-bar"><div class="stat-fill justice" id="sf-justice" style="width:70%"></div></div>
+      </div>
+    </div>
+
+    <div class="finance-box">
+      <h3>💰 재정 현황</h3>
+      <div class="finance-row"><span class="label">월 급여</span><span class="value green" id="fb-salary">190만원</span></div>
+      <div class="finance-row"><span class="label">월 지출</span><span class="value red"   id="fb-expense">120만원</span></div>
+      <div class="finance-row"><span class="label">월 저축</span><span class="value"       id="fb-save">70만원</span></div>
+      <div class="finance-row" style="border-top:1px solid var(--border);padding-top:6px;margin-top:6px;">
+        <span class="label">총 자산</span><span class="value green" id="fb-asset">0원</span>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; padding:10px; background:#152030; border-radius:8px;">
+      <div style="font-size:.75rem; color:var(--subtext); margin-bottom:6px;">📁 직군</div>
+      <div style="font-size:.85rem; color:var(--text);" id="sb-dept">경찰 생활안전</div>
+      <div style="font-size:.75rem; color:var(--subtext); margin-top:6px;" id="sb-path-label">진입경로: -</div>
+    </div>
+
+    <div style="margin-top:16px; padding:10px; background:#152030; border-radius:8px;" id="flags-box">
+      <div style="font-size:.75rem; color:var(--subtext); margin-bottom:6px;">🏷️ 획득 경험</div>
+      <div id="flags-list" style="font-size:.75rem; color:#4a9a7a; line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content" id="main-content"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 4: BRANCH (5년 후 직군 전환)
+═══════════════════════════════════════════ -->
+<div id="screen-branch" class="screen">
+  <h2>🔀 5년 후 직군 선택</h2>
+  <p id="branch-subtitle">경찰 생활안전 5년 완료! 다음 경력을 선택하세요.</p>
+  <div class="branch-grid" id="branch-grid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 5: ENDING
+═══════════════════════════════════════════ -->
+<div id="screen-ending" class="screen">
+  <div class="ending-card" id="ending-card"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   GAME ENGINE
+═══════════════════════════════════════════════════ */
+
+// ── STATE ─────────────────────────────────────────
+const state = {
+  path: null,
+  year: 1,
+  age: 24,
+  rank: '순경',
+  rankHon: 1,
+  stats: { health:70, stress:20, grade:60, network:30, justice:70 },
+  finance: { salary:190, expense:120, asset:0 },
+  flags: [],
+  eventIdx: 0,
+  yearEventCount: 0,
+  chapterEventsDone: []
+};
+
+// ── MEDIA ASSETS ──────────────────────────────────
+const MEDIA = {
+  videos: [
+    'https://www.genspark.ai/api/files/s/K6l5akMy',
+    'https://www.genspark.ai/api/files/s/wTjVmtQk',
+    'https://www.genspark.ai/api/files/s/mKUzQxmt',
+    'https://www.genspark.ai/api/files/s/nIQ70FRh',
+    'https://www.genspark.ai/api/files/s/36iL3h2T',
+    'https://www.genspark.ai/api/files/s/WvkwLdrw',
+    'https://www.genspark.ai/api/files/s/ya2AryzX',
+    'https://www.genspark.ai/api/files/s/ucFtxQe6',
+    'https://www.genspark.ai/api/files/s/VDJswyHC',
+    'https://www.genspark.ai/api/files/s/o5yfU1vj',
+    'https://www.genspark.ai/api/files/s/il9yYczr',
+    'https://www.genspark.ai/api/files/s/Q6zGWTZz',
+    'https://www.genspark.ai/api/files/s/4egUNoHG'
+  ],
+  images: [
+    'https://www.genspark.ai/api/files/s/H5Q35RRa',
+    'https://www.genspark.ai/api/files/s/sfxsrwsh',
+    'https://www.genspark.ai/api/files/s/oVWZscWF',
+    'https://www.genspark.ai/api/files/s/bPbkRw5k',
+    'https://www.genspark.ai/api/files/s/KCeVghIj',
+    'https://www.genspark.ai/api/files/s/Z43olJmx',
+    'https://www.genspark.ai/api/files/s/cAb61JD9',
+    'https://www.genspark.ai/api/files/s/fPr6aJum'
+  ]
+};
+
+// ── ENTRY PATHS ───────────────────────────────────
+const ENTRY_PATHS = [
+  {
+    id:'police-univ', icon:'🏫', name:'경찰대학교 입학',
+    desc:'경쟁률 100:1 이상. 합격 시 4년 전액 장학금, 졸업 후 경위 임용.',
+    tag:'엘리트 코스',
+    cond:'성적 80 이상',
+    initStats:{ health:70, stress:30, grade:85, network:40, justice:75 },
+    finance:{ salary:220, expense:110, asset:0 },
+    age:22, rank:'경위', rankHon:1,
+    bonus:'경위_임용'
+  },
+  {
+    id:'general-univ', icon:'🎓', name:'일반대 졸업 후 순경 공채',
+    desc:'4년제 대학 졸업 후 순경 공채 시험 응시. 가장 일반적인 경로.',
+    tag:'일반 공채',
+    cond:'없음',
+    initStats:{ health:65, stress:20, grade:60, network:30, justice:70 },
+    finance:{ salary:190, expense:120, asset:0 },
+    age:24, rank:'순경', rankHon:1,
+    bonus:null
+  },
+  {
+    id:'police-admin', icon:'📖', name:'경찰행정학과 진학',
+    desc:'경찰행정학과 전공. 시험 준비에 유리하고 경찰 네트워크 형성 가능.',
+    tag:'전공 보너스',
+    cond:'없음',
+    initStats:{ health:65, stress:20, grade:70, network:45, justice:72 },
+    finance:{ salary:190, expense:120, asset:0 },
+    age:24, rank:'순경', rankHon:1,
+    bonus:'경찰행정_전공'
+  },
+  {
+    id:'highschool', icon:'📋', name:'고졸 순경 공채',
+    desc:'만 18세 이상 응시 가능. 빠른 임용이 가능하나 승진 경쟁 불리.',
+    tag:'조기 임용',
+    cond:'없음',
+    initStats:{ health:75, stress:15, grade:45, network:20, justice:68 },
+    finance:{ salary:185, expense:115, asset:0 },
+    age:21, rank:'순경', rankHon:1,
+    bonus:'현장경험_우선'
+  },
+  {
+    id:'military', icon:'🎖️', name:'의무경찰(전경) 출신 공채',
+    desc:'군 복무를 의무경찰로 대체 후 순경 공채 응시. 체력 우위.',
+    tag:'체력 우위',
+    cond:'없음',
+    initStats:{ health:85, stress:15, grade:55, network:35, justice:70 },
+    finance:{ salary:190, expense:115, asset:0 },
+    age:25, rank:'순경', rankHon:1,
+    bonus:'군복무경험'
+  },
+  {
+    id:'career-change', icon:'🔄', name:'직장인 경력 후 공채',
+    desc:'타 직종 경력 후 공채 응시. 사회 경험 풍부하나 나이 부담.',
+    tag:'사회경험 풍부',
+    cond:'없음',
+    initStats:{ health:60, stress:25, grade:55, network:50, justice:65 },
+    finance:{ salary:190, expense:130, asset:500 },
+    age:28, rank:'순경', rankHon:1,
+    bonus:'사회경험'
+  }
+];
+
+// ── EVENTS DATA (5년 × 약 10이벤트) ──────────────
+const EVENTS = [
+
+  /* ── YEAR 1 ── */
+  {
+    id:'y1_001', year:1, chapter:6,
+    title:'🚔 임용식 — 첫 출근',
+    desc:'드디어 경찰관이 됐습니다. 제복을 입고 지구대 문을 열었습니다. 선임 경사 김철수가 다가옵니다. "신입이지? 첫날부터 밤번이야."',
+    media:{ type:'video', idx:0 },
+    choices:[
+      { text:'긴장하며 "최선을 다하겠습니다!"', eff:{ justice:+5, network:+5, stress:+5 }, result:'선임이 호탕하게 웃으며 등을 두드렸습니다. "기특한 친구네." 좋은 첫인상을 남겼습니다.', flag:'성실한_첫인상' },
+      { text:'침착하게 근무 지침서를 먼저 읽는다', eff:{ grade:+5, stress:-5 }, result:'선임이 "꼼꼼한 친구네"라고 칭찬했습니다. 실무 이해도가 빠르게 올랐습니다.', flag:'체계적_성격' }
+    ]
+  },
+  {
+    id:'y1_002', year:1, chapter:6,
+    title:'📞 첫 112 신고 대응',
+    desc:'오전 2시, 주거침입 의심 신고가 접수됐습니다. 지구대에서 500m 거리. 선임이 "네가 먼저 나가봐" 합니다.',
+    media:{ type:'video', idx:1 },
+    choices:[
+      { text:'단독으로 즉시 출동', eff:{ health:-5, stress:+10, justice:+10, network:+5 }, result:'용의자를 홀로 제압했습니다. 위험했지만 주민을 보호했습니다. 용기 있다는 평가를 받았습니다.', flag:'단독출동경험' },
+      { text:'응원 요청 후 함께 출동', eff:{ health:-5, stress:+5, justice:+5, network:+10 }, result:'팀으로 안전하게 처리했습니다. 선임이 "판단력이 좋다"고 칭찬했습니다.', flag:'팀플레이경험' },
+      { text:'선임에게 동행 요청', eff:{ health:-3, stress:+3, justice:+3, network:+8 }, result:'선임과 함께 처리했습니다. 현장 대응 요령을 배웠습니다.', flag:'멘토관계형성' }
+    ]
+  },
+  {
+    id:'y1_003', year:1, chapter:6,
+    title:'😤 민원인 폭언 사태',
+    desc:'주취자 남성이 파출소에 들어와 고래고래 소리를 지릅니다. "경찰이 이따위야?! 내가 세금 내는데!" 동료들이 지켜보고 있습니다.',
+    media:{ type:'image', idx:0 },
+    choices:[
+      { text:'참고 조용히 안내한다', eff:{ stress:+15, justice:-5, network:+5 }, result:'상황은 진정됐지만 스트레스가 쌓였습니다. 민원인은 그냥 돌아갔습니다.', flag:'인내경험' },
+      { text:'정중하지만 단호하게 경고', eff:{ stress:+8, justice:+10, network:+3 }, result:'남성이 화를 가라앉혔습니다. 동료들이 "잘 처리했다"고 했습니다.', flag:'단호한_대응' },
+      { text:'정식 주취소란 절차로 처리', eff:{ stress:+5, justice:+15, network:-5 }, result:'절차대로 처리했습니다. 상사에게는 인정받았지만 민원 건수가 기록됐습니다.', flag:'원칙주의' }
+    ]
+  },
+  {
+    id:'y1_004', year:1, chapter:6,
+    title:'🔪 편의점 절도 현행범 체포',
+    desc:'야간 순찰 중 편의점에서 절도 현행범을 발견했습니다. 용의자가 도주를 시도합니다.',
+    media:{ type:'video', idx:2 },
+    choices:[
+      { text:'직접 추격하여 체포', eff:{ health:-10, stress:+10, justice:+15, network:+5 }, result:'150m 추격 끝에 체포했습니다. 체력이 소모됐지만 성공적으로 현행범을 잡았습니다.', flag:'체포경험_현행범' },
+      { text:'무전으로 지원 요청 후 포위', eff:{ health:-5, stress:+5, justice:+10, network:+10 }, result:'팀플레이로 안전하게 체포했습니다. 보고서 작성도 원활했습니다.', flag:'팀체포경험' }
+    ]
+  },
+  {
+    id:'y1_005', year:1, chapter:6,
+    title:'🍺 동료 회식 제안',
+    desc:'1개월 차, 지구대 동료들이 회식을 제안합니다. "신입이 쏜다~" 농담도 들립니다.',
+    media:{ type:'image', idx:1 },
+    choices:[
+      { text:'적극적으로 참여하고 분위기 맞춘다', eff:{ stress:-10, network:+20, health:-5 }, result:'동료들과 친해졌습니다. 팀 결속력이 높아졌습니다. 다음 날 약간 피곤했습니다.', flag:'동료관계_형성' },
+      { text:'참석하되 적당히 마신다', eff:{ stress:-5, network:+10 }, result:'적당히 교류했습니다. 무난한 관계를 유지했습니다.', flag:'균형적_교류' },
+      { text:'내일 근무를 이유로 정중히 거절', eff:{ stress:0, network:-5, grade:+5 }, result:'체력을 아꼈습니다. 다음 날 더 집중할 수 있었지만 관계가 약간 소원해졌습니다.', flag:'자기관리_우선' }
+    ]
+  },
+  {
+    id:'y1_006', year:1, chapter:6,
+    title:'📑 보고서 작성의 벽',
+    desc:'사건 처리 후 보고서 작성이 어렵습니다. 선임이 "이게 뭐야, 다시 써" 라고 합니다.',
+    media:{ type:'image', idx:2 },
+    choices:[
+      { text:'밤새워 완벽하게 다시 쓴다', eff:{ health:-10, stress:+15, grade:+15 }, result:'새벽 4시에 완성했습니다. 상사에게 "이제 됐네"라는 말을 들었습니다. 실력이 올랐습니다.', flag:'보고서_숙달' },
+      { text:'선임에게 도움을 요청한다', eff:{ stress:+5, network:+10, grade:+8 }, result:'선임이 친절히 가르쳐줬습니다. 빠르게 배웠고 관계도 좋아졌습니다.', flag:'멘토링수혜' }
+    ]
+  },
+  {
+    id:'y1_007', year:1, chapter:6,
+    title:'🏠 주거 결정',
+    desc:'1년차를 마치며 주거 환경을 결정해야 합니다. 지구대 근처 원룸 vs 부모님 집 통근.',
+    media:{ type:'image', idx:3 },
+    choices:[
+      { text:'지구대 근처 원룸 (월세 45만원)', eff:{ stress:-10, network:+5 }, result:'독립 생활을 시작했습니다. 출퇴근 시간이 줄었고 생활이 편해졌습니다. 지출이 늘었습니다.', flag:'독립생활', finChange:{ expense:+45 } },
+      { text:'부모님 집에서 통근 (월 교통비 10만원)', eff:{ stress:-5, health:+5 }, result:'저축이 늘었습니다. 부모님과 함께 지내며 안정감이 있습니다.', flag:'절약생활', finChange:{ expense:+10 } }
+    ]
+  },
+  {
+    id:'y1_008', year:1, chapter:6,
+    title:'🚒 소방관과 공동 출동 (타직업 접점)',
+    desc:'가스 누출 의심 신고로 소방서와 공동 출동했습니다. 소방관 이민호와 팀을 이뤄 현장을 처리했습니다.',
+    media:{ type:'video', idx:3 },
+    choices:[
+      { text:'소방관과 적극적으로 소통하며 협력', eff:{ network:+15, justice:+5 }, result:'이민호와 친해졌습니다. "경찰이랑 일하니 든든하네요"라는 말을 들었습니다. 소방 업무도 이해하게 됐습니다.', flag:'소방관_네트워크' },
+      { text:'각자 역할에 집중', eff:{ justice:+10, stress:-5 }, result:'효율적으로 처리했습니다. 전문성이 돋보였습니다.', flag:'전문적_처리' }
+    ]
+  },
+
+  /* ── YEAR 2 ── */
+  {
+    id:'y2_001', year:2, chapter:6,
+    title:'👨‍👩‍👧 가정폭력 신고 출동',
+    desc:'2년차 첫 달, 가정폭력 신고가 접수됐습니다. 현장 도착 시 피해자가 울고 있습니다.',
+    media:{ type:'video', idx:4 },
+    choices:[
+      { text:'가해자 즉시 분리 및 보호조치', eff:{ health:-5, stress:+15, justice:+20, network:+5 }, result:'피해자를 안전하게 보호했습니다. 사회복지사와 연계했습니다. 정의감이 높아졌습니다.', flag:'가정폭력_대응' },
+      { text:'중재를 통해 합의 유도', eff:{ stress:+5, justice:-5, network:+10 }, result:'그 자리에서 합의됐습니다. 하지만 재신고 가능성이 남았습니다. 복지사가 "분리가 나았을 것"이라 했습니다.', flag:'중재경험' }
+    ]
+  },
+  {
+    id:'y2_002', year:2, chapter:6,
+    title:'📚 경장 승진 시험 공부',
+    desc:'2년 이상 근무 시 경장 승진 시험 응시 가능. 동기들이 이미 공부를 시작했습니다.',
+    media:{ type:'image', idx:4 },
+    choices:[
+      { text:'퇴근 후 매일 3시간 공부', eff:{ health:-10, stress:+20, grade:+25 }, result:'힘들었지만 실력이 빠르게 늘었습니다. 시험 준비가 잘 됐습니다.', flag:'승진준비_경장' },
+      { text:'실무에 집중하며 틈틈이 공부', eff:{ health:-3, stress:+8, grade:+10, justice:+5 }, result:'균형을 유지했습니다. 시험 준비는 됐지만 경쟁자보다 조금 부족할 수 있습니다.', flag:'균형적_준비' },
+      { text:'지금은 실무가 더 중요하다', eff:{ health:+5, stress:-5, network:+10 }, result:'현장 경험을 쌓았습니다. 승진은 늦춰지겠지만 실력 있는 경찰관이 됩니다.', flag:'실무우선' }
+    ]
+  },
+  {
+    id:'y2_003', year:2, chapter:6,
+    title:'🏫 학교전담경찰관(SPO) 임시 배치',
+    desc:'관할 중학교에서 학교폭력 문제가 심각해졌습니다. 임시로 학교전담경찰관 역할을 맡았습니다.',
+    media:{ type:'video', idx:5 },
+    choices:[
+      { text:'학생들과 적극적으로 소통', eff:{ network:+15, justice:+10, stress:+5 }, result:'학생들이 점차 마음을 열었습니다. 교사들과도 좋은 관계를 형성했습니다.', flag:'교사_네트워크' },
+      { text:'규정에 따라 사안 처리에 집중', eff:{ justice:+15, grade:+5 }, result:'학교폭력 사건들을 정확히 처리했습니다. 학교측이 전문성을 인정했습니다.', flag:'학교폭력_처리' }
+    ]
+  },
+  {
+    id:'y2_004', year:2, chapter:6,
+    title:'🌆 지역 축제 경비 투입',
+    desc:'관할 지역 대규모 축제에 경비 인력으로 투입됐습니다. 12시간 근무.',
+    media:{ type:'video', idx:6 },
+    choices:[
+      { text:'적극적으로 시민 안내 및 도움', eff:{ health:-15, stress:+10, network:+10, justice:+5 }, result:'시민들이 감사 인사를 많이 했습니다. 지치지만 보람 있었습니다.', flag:'공중행사_경험' },
+      { text:'배치된 구역만 성실히 지킨다', eff:{ health:-10, stress:+5, justice:+5 }, result:'임무를 충실히 수행했습니다. 문제없이 마쳤습니다.', flag:'경비임무_완수' }
+    ]
+  },
+  {
+    id:'y2_005', year:2, chapter:6,
+    title:'💊 마약 의심 신고 처리',
+    desc:'편의점 화장실에서 마약 투약 의심 신호. 신속한 판단이 필요합니다.',
+    media:{ type:'video', idx:7 },
+    choices:[
+      { text:'즉시 문을 열고 현행범 체포', eff:{ health:-5, stress:+10, justice:+15 }, result:'투약 현행범을 체포했습니다. 마약 수사대에 인계했습니다. 수사 경험이 생겼습니다.', flag:'마약수사_경험' },
+      { text:'마약수사대에 연락 후 대기', eff:{ stress:+5, justice:+10, network:+10 }, result:'전문 팀이 출동해 처리했습니다. 협력 관계를 구축했습니다.', flag:'수사팀_협력' }
+    ]
+  },
+  {
+    id:'y2_006', year:2, chapter:6,
+    title:'😔 동료의 번아웃',
+    desc:'3년 선배 박경장이 극심한 스트레스로 병가를 냈습니다. 업무 분담이 필요합니다.',
+    media:{ type:'image', idx:5 },
+    choices:[
+      { text:'흔쾌히 업무를 분담한다', eff:{ health:-10, stress:+20, justice:+10, network:+15 }, result:'동료들이 고마워했습니다. 하지만 나의 스트레스도 쌓였습니다.', flag:'동료지원_경험' },
+      { text:'상사에게 인력 보충을 요청한다', eff:{ stress:+5, justice:+5, network:+5 }, result:'정당한 요청이었습니다. 임시 인력이 배치됐습니다.', flag:'문제해결_능력' }
+    ]
+  },
+  {
+    id:'y2_007', year:2, chapter:6,
+    title:'🏋️ 체력검정 준비',
+    desc:'연간 경찰 체력검정이 있습니다. 등급에 따라 성과급 차이가 납니다.',
+    media:{ type:'image', idx:6 },
+    choices:[
+      { text:'2개월 집중 훈련', eff:{ health:+20, stress:+10 }, result:'1등급을 받았습니다. 성과급 20만원 추가. 동료들 사이 체력 좋다는 평판이 생겼습니다.', flag:'체력1등급', finChange:{ asset:+20 } },
+      { text:'기본 컨디션 유지', eff:{ health:+5, stress:-5 }, result:'2등급을 받았습니다. 성과급 10만원 추가.', flag:'체력2등급', finChange:{ asset:+10 } }
+    ]
+  },
+  {
+    id:'y2_008', year:2, chapter:6,
+    title:'🤝 사회복지사와 협력 (타직업 접점)',
+    desc:'반복 신고되는 고독사 위험 가구가 있습니다. 지역 사회복지사 정수진이 협조를 요청했습니다.',
+    media:{ type:'video', idx:8 },
+    choices:[
+      { text:'복지사와 정기 연락망 구축', eff:{ network:+15, justice:+10 }, result:'시스템이 만들어졌습니다. 위기 가정을 빠르게 파악할 수 있게 됐습니다.', flag:'복지사_네트워크' },
+      { text:'이번 건만 협조하고 마친다', eff:{ justice:+5, network:+5 }, result:'이번 가구는 지원받았습니다. 체계는 만들어지지 않았습니다.', flag:'단발성_협력' }
+    ]
+  },
+
+  /* ── YEAR 3 ── */
+  {
+    id:'y3_001', year:3, chapter:6,
+    title:'🎖️ 경장 진급!',
+    desc:'드디어 경장으로 진급했습니다. 급여가 오르고 역할이 늘었습니다.',
+    media:{ type:'image', idx:7 },
+    choices:[
+      { text:'진급 기념 동료 회식 개최', eff:{ stress:-15, network:+20, health:-5 }, result:'동료들과 즐거운 시간을 가졌습니다. 팀 사기가 올랐습니다. 30만원 지출했습니다.', flag:'진급축하', finChange:{ salary:+40 } },
+      { text:'조용히 업무에 집중한다', eff:{ stress:-5, grade:+5 }, result:'묵묵히 일했습니다. 상사에게 성실하다는 인상을 남겼습니다.', flag:'성실한_경장', finChange:{ salary:+40 } }
+    ]
+  },
+  {
+    id:'y3_002', year:3, chapter:6,
+    title:'👮‍♂️ 후배 순경 지도',
+    desc:'새로 배치된 순경 김신입의 멘토가 됐습니다. 어떻게 지도하시겠습니까?',
+    media:{ type:'image', idx:0 },
+    choices:[
+      { text:'엄격하게 규정 중심으로 가르친다', eff:{ justice:+10, network:+5, stress:+5 }, result:'신입이 빠르게 규정을 습득했습니다. 처음엔 어려워했지만 나중에 감사했습니다.', flag:'엄격한_멘토' },
+      { text:'친근하게 경험을 공유하며 가르친다', eff:{ network:+15, justice:+5, stress:-5 }, result:'신입과 좋은 관계를 형성했습니다. 상사에게 "좋은 멘토"라는 평가를 받았습니다.', flag:'친근한_멘토' }
+    ]
+  },
+  {
+    id:'y3_003', year:3, chapter:6,
+    title:'🚗 교통사고 현장 처리',
+    desc:'대형 교통사고가 발생했습니다. 생활안전 직군이지만 가장 먼저 현장에 도착했습니다.',
+    media:{ type:'video', idx:9 },
+    choices:[
+      { text:'즉시 구조 활동 및 교통통제', eff:{ health:-10, stress:+15, justice:+15, network:+5 }, result:'3명을 구조했습니다. 교통경찰과 소방대가 도착할 때까지 현장을 지켰습니다.', flag:'교통사고_처리' },
+      { text:'교통경찰 요청 후 주변 안전 확보', eff:{ health:-5, stress:+8, justice:+10, network:+10 }, result:'올바른 역할 분담이었습니다. 교통경찰이 "잘 처리했다"고 했습니다.', flag:'역할분담_이해' }
+    ]
+  },
+  {
+    id:'y3_004', year:3, chapter:6,
+    title:'💒 결혼 고민',
+    desc:'3년차, 연인 박지영이 결혼을 이야기합니다. 경찰 업무로 바쁜데... 어떻게 하시겠습니까?',
+    media:{ type:'image', idx:1 },
+    choices:[
+      { text:'결혼을 결정한다', eff:{ stress:-10, network:+10 }, result:'결혼식을 올렸습니다. 결혼 비용 2,000만원이 지출됐습니다. 안정적인 삶의 기반이 생겼습니다.', flag:'결혼완료', finChange:{ asset:-2000 } },
+      { text:'1~2년 더 준비하자고 한다', eff:{ stress:+5, network:+5 }, result:'연인이 이해해줬습니다. 자산을 더 모을 시간을 얻었습니다.', flag:'결혼준비중' },
+      { text:'현재는 일에 집중하고 싶다', eff:{ justice:+5, stress:-5, network:-10 }, result:'연인과 관계가 힘들어졌습니다. 하지만 업무에 더 집중할 수 있게 됐습니다.', flag:'독신주의' }
+    ]
+  },
+  {
+    id:'y3_005', year:3, chapter:6,
+    title:'🌙 야간 순찰 중 수상한 차량 발견',
+    desc:'새벽 3시 순찰 중 번호판을 가린 수상한 차량을 발견했습니다.',
+    media:{ type:'video', idx:10 },
+    choices:[
+      { text:'즉시 정차 명령 및 검문', eff:{ health:-5, stress:+10, justice:+15 }, result:'훔친 차량이었습니다. 절도범 2명을 검거했습니다. 공로 표창을 받았습니다.', flag:'표창수상' },
+      { text:'번호판 조회 후 지원 요청', eff:{ stress:+5, justice:+10, network:+5 }, result:'절도 차량 확인 후 지원 팀과 함께 안전하게 검거했습니다.', flag:'안전한_검거' }
+    ]
+  },
+  {
+    id:'y3_006', year:3, chapter:6,
+    title:'📊 경사 시험 준비 시작',
+    desc:'경사 시험은 경장 2년 이상 되어야 응시 가능합니다. 이제 준비를 시작할 때입니다.',
+    media:{ type:'image', idx:2 },
+    choices:[
+      { text:'지금부터 1년 계획으로 준비', eff:{ health:-5, stress:+15, grade:+20 }, result:'체계적인 준비를 시작했습니다. 동기들보다 빠른 출발입니다.', flag:'경사준비_조기' },
+      { text:'4년차부터 집중해서 준비', eff:{ health:+5, stress:-5, network:+10 }, result:'지금은 현장 경험에 집중했습니다. 나중에 더 집중적으로 준비할 예정입니다.', flag:'경사준비_후기' }
+    ]
+  },
+  {
+    id:'y3_007', year:3, chapter:6,
+    title:'🔍 수사 부서 파견 제안',
+    desc:'수사과장이 "자네 능력이 좋으니 수사 파견 어때?"라고 제안했습니다.',
+    media:{ type:'video', idx:11 },
+    choices:[
+      { text:'수락한다 — 새로운 경험 기회', eff:{ grade:+15, network:+15, stress:+10 }, result:'3개월 수사 파견을 경험했습니다. 수사 기술을 배웠고 형사들과 친해졌습니다.', flag:'수사파견경험' },
+      { text:'거절 — 생활안전에 집중', eff:{ justice:+5, network:-5, stress:-5 }, result:'지구대에 남았습니다. 생활안전 전문가로 성장하는 길을 선택했습니다.', flag:'생활안전_전문화' }
+    ]
+  },
+  {
+    id:'y3_008', year:3, chapter:6,
+    title:'⚖️ 검사의 수사 지휘 (타직업 접점)',
+    desc:'담당 사건에서 검사 이준석이 직접 수사를 지휘하러 왔습니다.',
+    media:{ type:'image', idx:3 },
+    choices:[
+      { text:'검사에게 적극적으로 배우려 한다', eff:{ grade:+10, network:+15, justice:+5 }, result:'이준석 검사가 법률 지식을 가르쳐줬습니다. "경찰에서 법원으로 오는 사람도 있어요"라고 귀띔했습니다.', flag:'검사_네트워크' },
+      { text:'경찰 입장에서 소신껏 의견을 낸다', eff:{ justice:+15, network:+5 }, result:'검사가 경찰의 현장 감각을 인정했습니다. 상호 존중하는 관계가 됐습니다.', flag:'법조현장_이해' }
+    ]
+  },
+
+  /* ── YEAR 4 ── */
+  {
+    id:'y4_001', year:4, chapter:6,
+    title:'🏠 전세 자금 대출 고민',
+    desc:'4년차, 자산이 3,000만원 쌓였습니다. 전세 2억 아파트에 대출을 받아 입주할 기회가 생겼습니다.',
+    media:{ type:'image', idx:4 },
+    choices:[
+      { text:'전세 대출 받아 독립한다 (월 이자 40만원)', eff:{ stress:+10, network:+5, health:+5 }, result:'독립했습니다. 생활이 안정됐습니다. 월 지출이 늘었지만 자산이 생겼습니다.', flag:'전세_독립', finChange:{ expense:+40 } },
+      { text:'계속 저축해서 전세금을 모은다', eff:{ stress:-5, health:+5 }, result:'절약 생활을 계속했습니다. 2년 후 대출 없이 가능해질 것 같습니다.', flag:'무대출_저축' }
+    ]
+  },
+  {
+    id:'y4_002', year:4, chapter:6,
+    title:'🧒 아동학대 신고 처리',
+    desc:'아동학대 의심 신고가 접수됐습니다. 현장 도착 시 아이가 멍이 들어 있습니다.',
+    media:{ type:'video', idx:12 },
+    choices:[
+      { text:'즉시 아동 분리 조치', eff:{ health:-5, stress:+20, justice:+25, network:+5 }, result:'아이를 보호소에 보냈습니다. 부모가 항의했지만 아이의 안전을 지켰습니다. 아동 전문가에게 연계했습니다.', flag:'아동보호_경험' },
+      { text:'더 많은 증거를 수집 후 조치', eff:{ grade:+10, stress:+10, justice:+15 }, result:'증거를 확보해 법적으로 완벽한 사건을 만들었습니다. 검사에게 칭찬받았습니다.', flag:'증거수집_능숙' }
+    ]
+  },
+  {
+    id:'y4_003', year:4, chapter:6,
+    title:'🏋️ 특수부대 지원 기회',
+    desc:'경찰특공대 지원 공고가 났습니다. 체력 조건이 까다롭습니다.',
+    media:{ type:'video', idx:0 },
+    cond:{ health: 80 },
+    condFail:'체력이 80 이상이어야 지원 가능합니다. 체력을 키워야 합니다.',
+    choices:[
+      { text:'지원한다!', eff:{ health:-10, stress:+20, justice:+15, network:+10 }, result:'치열한 선발 과정을 통과했습니다! 경찰특공대에 배치됐습니다. 완전히 다른 세계가 펼쳐집니다.', flag:'특공대_선발' },
+      { text:'지금은 때가 아니다', eff:{ health:+5, stress:-10 }, result:'다음 기회를 노리기로 했습니다. 지금은 체력을 더 키웁니다.', flag:'특공대_보류' }
+    ]
+  },
+  {
+    id:'y4_004', year:4, chapter:6,
+    title:'🔐 범죄예방 프로그램 기획',
+    desc:'지역 범죄예방 교육 프로그램 기획 담당자가 됐습니다.',
+    media:{ type:'image', idx:5 },
+    choices:[
+      { text:'적극적으로 아이디어를 내고 주도한다', eff:{ grade:+10, network:+15, stress:+10, justice:+10 }, result:'혁신적인 프로그램을 만들었습니다. 지역사회가 호응했고 언론에 소개됐습니다.', flag:'범죄예방_기획' },
+      { text:'기존 프로그램을 참고해 안정적으로 진행', eff:{ grade:+5, network:+5, stress:+3 }, result:'무난하게 진행됐습니다. 큰 문제 없이 완성됐습니다.', flag:'안정적_진행' }
+    ]
+  },
+  {
+    id:'y4_005', year:4, chapter:6,
+    title:'😡 상관과의 갈등',
+    desc:'새로 온 경감 최상관이 부당한 지시를 내립니다. "이 민원 건 그냥 덮어."',
+    media:{ type:'image', idx:6 },
+    choices:[
+      { text:'원칙대로 처리하고 상관에게 보고', eff:{ justice:+20, network:-15, stress:+15 }, result:'원칙을 지켰습니다. 최경감에게 찍혔지만 감찰반에서 좋은 평가를 받았습니다.', flag:'원칙_고수' },
+      { text:'상관 지시에 따른다', eff:{ justice:-20, network:+10, stress:-5 }, result:'갈등을 피했습니다. 하지만 정의감이 흔들리기 시작했습니다. 나중에 양심의 가책을 느낄 것입니다.', flag:'상관복종' },
+      { text:'감찰에 익명 제보를 한다', eff:{ justice:+25, network:-10, stress:+20 }, result:'감찰이 시작됐습니다. 최경감이 징계를 받았습니다. 조직 내 긴장감이 높아졌습니다.', flag:'내부고발' }
+    ]
+  },
+  {
+    id:'y4_006', year:4, chapter:6,
+    title:'🕵️ 사설탐정 전직 제안 (타직업 접점)',
+    desc:'선배 퇴직 경찰관이 사설탐정 사무소를 열며 합류를 권유했습니다. "공무원보다 돈 많이 벌어."',
+    media:{ type:'image', idx:7 },
+    choices:[
+      { text:'솔깃하지만 일단 거절한다', eff:{ stress:-5, justice:+5 }, result:'현직을 유지했습니다. 하지만 탐정 업무의 세계에 관심이 생겼습니다.', flag:'탐정업_관심' },
+      { text:'관심 없다, 경찰이 좋다', eff:{ justice:+10, network:+5 }, result:'확실한 소속감을 느꼈습니다. 경찰이라는 직업에 자부심이 생겼습니다.', flag:'경찰_자부심' }
+    ]
+  },
+  {
+    id:'y4_007', year:4, chapter:6,
+    title:'📱 사이버 범죄 신고 처리',
+    desc:'스마트폰 금융 사기 피해자가 신고했습니다. IT 지식이 필요합니다.',
+    media:{ type:'video', idx:1 },
+    choices:[
+      { text:'사이버수사대에 즉시 이첩', eff:{ network:+10, grade:+5 }, result:'전문 팀이 빠르게 처리했습니다. 사이버팀과 네트워크가 생겼습니다.', flag:'사이버팀_협력' },
+      { text:'직접 디지털 증거를 수집 시도', eff:{ grade:+15, stress:+10 }, result:'어렵게 증거를 확보했습니다. IT 역량이 생겼고 사이버 범죄에 눈을 뜨게 됐습니다.', flag:'디지털_역량' }
+    ]
+  },
+  {
+    id:'y4_008', year:4, chapter:6,
+    title:'💰 4년차 자산 중간 점검',
+    desc:'4년 동안 일했습니다. 재정 상황을 점검할 시간입니다.',
+    media:{ type:'image', idx:0 },
+    choices:[
+      { text:'재테크 공부를 시작한다 (ETF/적금)', eff:{ stress:+5, grade:+5 }, result:'재정 관리 능력이 생겼습니다. 매달 50만원씩 ETF에 투자하기 시작했습니다.', flag:'재테크_시작', finChange:{ asset:+200 } },
+      { text:'현재 저축 방식을 유지한다', eff:{ stress:-5 }, result:'안정적으로 자산이 쌓이고 있습니다. 큰 변화는 없습니다.', flag:'안정적_저축', finChange:{ asset:+100 } }
+    ]
+  },
+
+  /* ── YEAR 5 ── */
+  {
+    id:'y5_001', year:5, chapter:6,
+    title:'📝 경사 승진 시험',
+    desc:'드디어 경사 시험에 응시합니다. 지금까지의 공부가 빛을 발하는 순간입니다.',
+    media:{ type:'image', idx:1 },
+    choices:[
+      { text:'시험장에서 최선을 다한다', eff:{ stress:+15 }, result:'', flag:'경사시험_응시' }
+    ],
+    isExam: true,
+    examStat: 'grade',
+    examThreshold: 65,
+    passResult:{ eff:{ grade:+10, network:+10, stress:-10 }, text:'합격했습니다! 경사로 진급했습니다. 월급이 260만원으로 올랐습니다.', flag:'경사_합격', finChange:{ salary:+30 } },
+    failResult:{ eff:{ stress:+10 }, text:'아쉽게 불합격했습니다. 다음 기회에 다시 도전할 수 있습니다. 경장으로 계속 근무합니다.', flag:'경사_불합격' }
+  },
+  {
+    id:'y5_002', year:5, chapter:6,
+    title:'🏙️ 대규모 시위 경비 투입',
+    desc:'도심에서 대규모 시위가 발생했습니다. 기동경비 지원 명령이 떨어졌습니다.',
+    media:{ type:'video', idx:2 },
+    choices:[
+      { text:'현장에서 시위대와 직접 대화 시도', eff:{ health:-10, stress:+15, justice:+10, network:+10 }, result:'일부 시위대가 해산했습니다. "대화하는 경찰관"으로 소문이 났습니다.', flag:'대화형_경찰' },
+      { text:'규정된 경비 진형을 유지', eff:{ health:-10, stress:+10, justice:+5 }, result:'안전하게 경비 임무를 마쳤습니다. 별다른 충돌 없이 종료됐습니다.', flag:'경비임무_완수2' }
+    ]
+  },
+  {
+    id:'y5_003', year:5, chapter:6,
+    title:'🌏 외사 업무 지원 (타직업 접점)',
+    desc:'외국인 범죄 신고가 접수됐습니다. 영어 가능 직원으로 임시 외사 지원 요청이 왔습니다.',
+    media:{ type:'image', idx:2 },
+    cond:{ grade: 60 },
+    choices:[
+      { text:'외사 지원에 자원한다', eff:{ network:+15, grade:+10, stress:+5 }, result:'외사과 경찰관들과 협력했습니다. 영어 실력이 늘었습니다. 외사 업무에 흥미가 생겼습니다.', flag:'외사_경험' },
+      { text:'생활안전 본업에 충실한다', eff:{ justice:+5, stress:-5 }, result:'맡은 일을 성실히 했습니다.', flag:'본업충실' }
+    ]
+  },
+  {
+    id:'y5_004', year:5, chapter:6,
+    title:'📸 경찰 홍보 영상 출연 제안',
+    desc:'경찰청 홍보팀이 채용 홍보 영상에 출연할 것을 요청했습니다.',
+    media:{ type:'video', idx:3 },
+    choices:[
+      { text:'기꺼이 참여한다', eff:{ network:+20, stress:-10 }, result:'영상이 온라인에서 화제가 됐습니다. "친근한 경찰"이라는 이미지가 만들어졌습니다.', flag:'홍보영상_출연' },
+      { text:'부끄러워서 거절한다', eff:{ stress:-5, justice:+3 }, result:'조용히 지냈습니다. 그것도 괜찮습니다.', flag:'조용한_경찰관' }
+    ]
+  },
+  {
+    id:'y5_005', year:5, chapter:6,
+    title:'🤔 이직 고민',
+    desc:'5년차, 민간 보안업체에서 스카우트 제안이 왔습니다. 연봉 4,000만원 제시.',
+    media:{ type:'image', idx:3 },
+    choices:[
+      { text:'제안을 거절하고 경찰을 계속한다', eff:{ justice:+15, network:+5 }, result:'경찰직에 대한 확신이 생겼습니다. 앞으로의 5년이 기대됩니다.', flag:'경찰_계속' },
+      { text:'솔깃하지만 일단 보류한다', eff:{ stress:+10, justice:-5 }, result:'고민이 깊어졌습니다. 5년 후를 다시 생각하게 됩니다.', flag:'이직_고민중' }
+    ]
+  },
+  {
+    id:'y5_006', year:5, chapter:6,
+    title:'🎯 5년차 직군 전환 선택',
+    desc:'5년의 경험을 쌓았습니다. 이제 전문화된 직군으로 이동할 기회가 왔습니다. 어느 방향으로 나아가겠습니까?',
+    media:{ type:'video', idx:4 },
+    choices:[
+      { text:'수사/형사 전환 신청 (조건: 수사파견경험)', eff:{ grade:+10, network:+10 }, result:'수사과 이동이 결정됐습니다. 진짜 형사의 삶이 시작됩니다.', flag:'형사전환_신청', cond_flag:'수사파견경험' },
+      { text:'생활안전 계속 — 팀장으로 성장', eff:{ justice:+10, network:+15 }, result:'지구대 팀장이 됐습니다. 지역 커뮤니티의 든든한 버팀목이 됩니다.', flag:'생활안전_팀장' },
+      { text:'사이버수사 전환 (조건: 디지털역량)', eff:{ grade:+15 }, result:'사이버수사대 발령이 났습니다. 디지털 범죄의 최전선에 섭니다.', flag:'사이버전환', cond_flag:'디지털_역량' }
+    ]
+  },
+  {
+    id:'y5_007', year:5, chapter:6,
+    title:'💎 5년 경찰 생활 결산',
+    desc:'5년이 지났습니다. 당신의 경찰 1기를 돌아봅니다.',
+    media:{ type:'video', idx:5 },
+    isFinal: true,
+    choices:[
+      { text:'5년을 마무리하고 다음 단계로 나아간다', eff:{}, result:'', flag:'5년완료' }
+    ]
+  }
+];
+
+// ── BRANCH OPTIONS (5년 후 직군 전환) ─────────────
+const BRANCHES = [
+  { id:'detective', icon:'🕵️', name:'형사 (수사과)', desc:'강력·지능·마약 수사. 범죄의 핵심을 파헤칩니다.', cond:{ flag:'수사파견경험' }, cond_text:'조건: 수사 파견 경험 필요' },
+  { id:'traffic', icon:'🚗', name:'교통경찰', desc:'교통사고 조사, 음주단속, 교통법규 집행.', cond:{}, cond_text:'조건: 없음 (누구나 가능)' },
+  { id:'security', icon:'🛡️', name:'경비경찰', desc:'집회·시위 관리, VIP 경호, 테러 대응.', cond:{}, cond_text:'조건: 없음' },
+  { id:'info', icon:'🔭', name:'정보경찰', desc:'범죄 첩보 수집, 정보 분석, 대공 업무.', cond:{ network: 70 }, cond_text:'조건: 인맥 70 이상' },
+  { id:'security-guard', icon:'🔒', name:'보안경찰', desc:'국가 기밀 보호, 보안 수사.', cond:{ justice: 75 }, cond_text:'조건: 정의감 75 이상' },
+  { id:'foreign', icon:'🌐', name:'외사경찰', desc:'국제 범죄, 외국인 관련 수사, 인터폴 협력.', cond:{ grade: 70 }, cond_text:'조건: 성적(영어) 70 이상' },
+  { id:'youth', icon:'👩‍👧', name:'여성청소년경찰', desc:'성범죄, 가정폭력, 아동학대, 청소년 보호.', cond:{ flag:'아동보호_경험' }, cond_text:'조건: 아동보호 경험 필요' },
+  { id:'forensic', icon:'🔬', name:'과학수사대', desc:'지문·DNA·법의학 감식, 사건 현장 분석.', cond:{ grade: 75 }, cond_text:'조건: 성적 75 이상 (이공계 우대)' },
+  { id:'cyber', icon:'💻', name:'사이버수사대', desc:'디지털 포렌식, 사이버 범죄, 해킹 수사.', cond:{ flag:'디지털_역량' }, cond_text:'조건: 디지털 역량 보유' },
+  { id:'special', icon:'⚡', name:'경찰특공대', desc:'테러 진압, 인질 협상, 특수 작전.', cond:{ health: 80 }, cond_text:'조건: 체력 80 이상' },
+  { id:'maritime', icon:'⚓', name:'해양경찰', desc:'해상 치안, 밀수·밀항 수사, 해양 구조.', cond:{ health: 70 }, cond_text:'조건: 체력 70 이상' },
+  { id:'safety-chief', icon:'👮', name:'생활안전 팀장 유지', desc:'지구대 팀장으로 계속 성장. 지역 커뮤니티 수호.', cond:{}, cond_text:'조건: 없음' }
+];
+
+// ── ENDINGS ───────────────────────────────────────
+const ENDINGS = [
+  { id:'elite',   icon:'🏆', name:'승진 엘리트',        cond: s => s.grade>=80 && s.stress<=40,                      desc:'경사 이상 달성, 간부 후보 트랙 진입. 당신은 경찰 조직의 미래입니다.', finNote:'5년 자산 약 5,000만원' },
+  { id:'hero',    icon:'🦸', name:'지역사회 영웅',       cond: s => s.justice>=80 && s.network>=70,                   desc:'주민들이 당신 이름을 기억합니다. 진정한 경찰의 표상.', finNote:'5년 자산 약 4,000만원' },
+  { id:'special-force', icon:'⚡', name:'특수부대 발탁', cond:(s,f) => s.health>=80 && f.includes('특공대_선발'),     desc:'경찰특공대 또는 기동대에 선발됐습니다. 엘리트 중의 엘리트.', finNote:'5년 자산 약 3,500만원' },
+  { id:'detective-track', icon:'🕵️', name:'형사 트랙 입문', cond:(s,f) => f.includes('수사파견경험') && s.grade>=60, desc:'수사의 세계에 발을 들였습니다. 강력계 형사로의 길이 열립니다.', finNote:'5년 자산 약 3,000만원' },
+  { id:'burnout', icon:'😮‍💨', name:'번아웃 위기',       cond: s => s.stress>=90,                                    desc:'극심한 스트레스로 정신건강 상담을 받고 있습니다. 회복이 필요합니다.', finNote:'5년 자산 약 2,000만원' },
+  { id:'corrupt', icon:'⚠️', name:'부패 경찰 경고',      cond: s => s.justice<=20,                                   desc:'감찰 조사를 받게 됐습니다. 올바른 선택을 돌아봐야 합니다.', finNote:'5년 자산 약 1,500만원' },
+  { id:'resign',  icon:'🚪', name:'조기 이직',           cond:(s,f) => s.justice<=30 || s.health<=20,                desc:'경찰을 떠나 새 진로를 찾습니다. 새로운 시작입니다.', finNote:'5년 자산 약 2,500만원' },
+  { id:'normal',  icon:'👮', name:'성실한 경찰관',        cond: () => true,                                           desc:'특별하지 않아도 괜찮습니다. 매일 묵묵히 자리를 지킨 당신이 진짜 영웅입니다.', finNote:'5년 자산 약 3,000만원' }
+];
+
+// ── UTILS ─────────────────────────────────────────
+function clamp(v) { return Math.max(0, Math.min(100, v)); }
+
+function applyEffects(eff) {
+  if(!eff) return;
+  if(eff.health  !== undefined) state.stats.health   = clamp(state.stats.health   + eff.health);
+  if(eff.stress  !== undefined) state.stats.stress   = clamp(state.stats.stress   + eff.stress);
+  if(eff.grade   !== undefined) state.stats.grade    = clamp(state.stats.grade    + eff.grade);
+  if(eff.network !== undefined) state.stats.network  = clamp(state.stats.network  + eff.network);
+  if(eff.justice !== undefined) state.stats.justice  = clamp(state.stats.justice  + eff.justice);
+}
+
+function applyFinChange(fin) {
+  if(!fin) return;
+  if(fin.salary  !== undefined) state.finance.salary  += fin.salary;
+  if(fin.expense !== undefined) state.finance.expense += fin.expense;
+  if(fin.asset   !== undefined) state.finance.asset   += fin.asset;
+}
+
+function addFlag(f) { if(f && !state.flags.includes(f)) state.flags.push(f); }
+
+function fmtMoney(v) {
+  if(v >= 10000) return (v/10000).toFixed(1) + '억원';
+  if(v >= 1000) return (v/1000).toFixed(1) + '천만원';
+  return v.toFixed(0) + '만원';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function updateSidebar() {
+  // year / age
+  document.getElementById('sb-year').textContent = state.year + '년차';
+  document.getElementById('sb-age').textContent  = state.age + '세';
+  // rank
+  const rankStr = state.rank + ' ' + state.rankHon + '호봉';
+  document.getElementById('sb-rank').textContent = rankStr;
+  // stats
+  ['health','stress','grade','network','justice'].forEach(k => {
+    const v = state.stats[k];
+    document.getElementById('sv-'+k).textContent = v;
+    document.getElementById('sf-'+k).style.width = v + '%';
+  });
+  // finance
+  const monthly = state.finance.salary - state.finance.expense;
+  document.getElementById('fb-salary').textContent  = state.finance.salary + '만원';
+  document.getElementById('fb-expense').textContent = state.finance.expense + '만원';
+  document.getElementById('fb-save').textContent    = monthly + '만원';
+  document.getElementById('fb-asset').textContent   = fmtMoney(state.finance.asset);
+  // progress
+  const totalEvents = EVENTS.length;
+  const pct = Math.round((state.eventIdx / totalEvents) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  // flags
+  document.getElementById('flags-list').textContent = state.flags.slice(-8).join('\n') || '없음';
+
+  // burnout warning
+  if(state.stats.stress >= 80) showToast('⚠️ 스트레스가 위험 수준입니다!');
+}
+
+// ── PATH INIT ─────────────────────────────────────
+function buildPathGrid() {
+  const grid = document.getElementById('path-grid');
+  grid.innerHTML = '';
+  ENTRY_PATHS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'path-card';
+    card.innerHTML = `
+      <div class="icon">${p.icon}</div>
+      <h3>${p.name}</h3>
+      <p>${p.desc}</p>
+      <span class="tag">${p.tag}</span>
+      <br><small style="color:#4a9a7a;font-size:.75rem;">조건: ${p.cond}</small>
+    `;
+    card.onclick = () => startGame(p);
+    grid.appendChild(card);
+  });
+}
+
+function startGame(path) {
+  state.path = path;
+  state.stats = { ...path.initStats };
+  state.finance = { ...path.finance };
+  state.age = path.age;
+  state.rank = path.rank;
+  state.rankHon = path.rankHon;
+  if(path.bonus) addFlag(path.bonus);
+  document.getElementById('sb-dept').textContent = '경찰 생활안전';
+  document.getElementById('sb-path-label').textContent = '진입: ' + path.name;
+  showScreen('screen-game');
+  updateSidebar();
+  playEvents();
+}
+
+// ── EVENT ENGINE ──────────────────────────────────
+let currentEvents = [];
+let eventPtr = 0;
+
+function playEvents() {
+  currentEvents = EVENTS;
+  eventPtr = 0;
+  renderEvent();
+}
+
+function renderEvent() {
+  if(eventPtr >= currentEvents.length) {
+    showEnding();
+    return;
+  }
+  const evt = currentEvents[eventPtr];
+  state.eventIdx = eventPtr;
+
+  // Check condition
+  if(evt.cond) {
+    const { health, grade, network, justice, flag } = evt.cond;
+    let ok = true;
+    if(health   !== undefined && state.stats.health   < health)   ok = false;
+    if(grade    !== undefined && state.stats.grade    < grade)    ok = false;
+    if(network  !== undefined && state.stats.network  < network)  ok = false;
+    if(justice  !== undefined && state.stats.justice  < justice)  ok = false;
+    if(!ok) {
+      // Skip with notice
+      const mc = document.getElementById('main-content');
+      mc.innerHTML = `
+        <div class="event-card">
+          <div class="event-id">이벤트 잠금됨</div>
+          <h3>🔒 ${evt.title}</h3>
+          <p class="desc">${evt.condFail || '스탯 조건 미충족으로 이 이벤트를 건너뜁니다.'}</p>
+          <button class="btn-next" onclick="nextEvent()">다음 →</button>
+        </div>`;
+      updateSidebar();
+      return;
+    }
+  }
+
+  // Year change
+  if(evt.year > state.year) {
+    showYearSummary(evt.year);
+    return;
+  }
+
+  const mc = document.getElementById('main-content');
+
+  // Media
+  let mediaHtml = '';
+  if(evt.media && evt.media.type !== 'none') {
+    const url = evt.media.type === 'video' ? MEDIA.videos[evt.media.idx % MEDIA.videos.length] : MEDIA.images[evt.media.idx % MEDIA.images.length];
+    if(evt.media.type === 'video') {
+      mediaHtml = `<div class="media-container"><video src="${url}" controls preload="metadata" style="width:100%;border-radius:12px;"></video></div>`;
+    } else {
+      mediaHtml = `<div class="media-container"><img src="${url}" alt="이벤트 이미지" style="width:100%;border-radius:12px;"></div>`;
+    }
+  }
+
+  // Choices
+  let choicesHtml = '<div class="choices">';
+  evt.choices.forEach((c, i) => {
+    const hasCondFlag = c.cond_flag && !state.flags.includes(c.cond_flag);
+    const effPrev = buildEffPreview(c.eff);
+    if(hasCondFlag) {
+      choicesHtml += `<div class="choice-btn" style="opacity:.4;cursor:not-allowed;" title="조건 미충족: ${c.cond_flag} 필요">🔒 ${c.text} <span style="color:#e74c3c;font-size:.75rem;">(조건 필요)</span></div>`;
+    } else {
+      choicesHtml += `<button class="choice-btn" onclick="chooseOption(${eventPtr},${i})">
+        <span>${String.fromCharCode(9312+i)} ${c.text}</span>
+        <span class="effects-preview">${effPrev}</span>
+      </button>`;
+    }
+  });
+  choicesHtml += '</div>';
+
+  // Exam event
+  if(evt.isExam) {
+    mc.innerHTML = `
+      <div class="chapter-header">
+        <div class="icon">📝</div>
+        <div><h2>${state.year}년차 — 시험</h2><p>${state.rank} · ${state.age}세</p></div>
+      </div>
+      <div class="event-card">
+        <div class="event-id">${evt.id}</div>
+        <h3>${evt.title}</h3>
+        ${mediaHtml}
+        <p class="desc">${evt.desc}</p>
+        <p style="color:#4a9a7a;font-size:.85rem;">현재 성적: ${state.stats.grade} / 합격 기준: ${evt.examThreshold}</p>
+        <button class="btn-next" onclick="resolveExam(${eventPtr})" style="margin-top:16px;">시험 응시 →</button>
+      </div>`;
+    updateSidebar();
+    return;
+  }
+
+  mc.innerHTML = `
+    <div class="chapter-header">
+      <div class="icon">👮</div>
+      <div><h2>${state.year}년차 경찰 생활</h2><p>${state.rank} · ${state.age}세 · ${state.path ? state.path.name : ''}</p></div>
+    </div>
+    <div class="event-card">
+      <div class="event-id">${evt.id}</div>
+      <h3>${evt.title}</h3>
+      ${mediaHtml}
+      <p class="desc">${evt.desc}</p>
+      ${choicesHtml}
+    </div>`;
+  updateSidebar();
+}
+
+function buildEffPreview(eff) {
+  if(!eff) return '';
+  const parts = [];
+  if(eff.health  ) parts.push((eff.health  >0?'💪+':'💪')+eff.health);
+  if(eff.stress  ) parts.push((eff.stress  >0?'😰+':'😰')+eff.stress);
+  if(eff.grade   ) parts.push((eff.grade   >0?'📚+':'📚')+eff.grade);
+  if(eff.network ) parts.push((eff.network >0?'🤝+':'🤝')+eff.network);
+  if(eff.justice ) parts.push((eff.justice >0?'⚖️+':'⚖️')+eff.justice);
+  return parts.join(' ');
+}
+
+window.chooseOption = function(evtIdx, choiceIdx) {
+  const evt = currentEvents[evtIdx];
+  const choice = evt.choices[choiceIdx];
+
+  // Apply effects
+  applyEffects(choice.eff);
+  if(choice.finChange) applyFinChange(choice.finChange);
+  addFlag(choice.flag);
+
+  // Monthly savings accumulate
+  const monthly = state.finance.salary - state.finance.expense;
+  state.finance.asset += monthly;
+
+  // Build effect chips
+  const chips = buildEffChips(choice.eff);
+
+  // isFinal?
+  if(evt.isFinal) {
+    const mc = document.getElementById('main-content');
+    mc.innerHTML = `
+      <div class="result-box">
+        <h4>✅ 5년 완료!</h4>
+        <p>${choice.result || '5년간의 경찰 생활이 끝났습니다.'}</p>
+        <div class="result-effects">${chips}</div>
+        <button class="btn-next" onclick="showBranchScreen()">직군 전환 선택 →</button>
+      </div>`;
+    updateSidebar();
+    return;
+  }
+
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = `
+    <div class="result-box">
+      <h4>✅ 선택 결과</h4>
+      <p>${choice.result}</p>
+      <div class="result-effects">${chips}</div>
+      <button class="btn-next" onclick="nextEvent()">다음 →</button>
+    </div>`;
+  updateSidebar();
+  checkSpecialTrigger();
+};
+
+function buildEffChips(eff) {
+  if(!eff) return '';
+  let html = '';
+  const map = { health:'💪체력', stress:'😰스트레스', grade:'📚성적', network:'🤝인맥', justice:'⚖️정의감' };
+  Object.entries(map).forEach(([k,label]) => {
+    if(eff[k] !== undefined && eff[k] !== 0) {
+      const cls = eff[k] > 0 ? (k==='stress'?'neg':'pos') : (k==='stress'?'pos':'neg');
+      html += `<span class="effect-chip ${cls}">${label} ${eff[k]>0?'+':''}${eff[k]}</span>`;
+    }
+  });
+  return html;
+}
+
+function checkSpecialTrigger() {
+  if(state.stats.stress >= 100) {
+    showToast('🚨 스트레스 한계 도달! 심리상담 이벤트가 추가됩니다.');
+    addFlag('번아웃_경험');
+    state.stats.stress = 80;
+  }
+  if(state.stats.health <= 0) {
+    showToast('🏥 체력 0! 입원 이벤트가 발생했습니다. 체력이 회복됩니다.');
+    state.stats.health = 30;
+    state.stats.stress += 20;
+  }
+}
+
+window.nextEvent = function() {
+  eventPtr++;
+  renderEvent();
+};
+
+window.resolveExam = function(evtIdx) {
+  const evt = currentEvents[evtIdx];
+  const pass = state.stats.grade >= evt.examThreshold;
+  const res = pass ? evt.passResult : evt.failResult;
+
+  applyEffects(res.eff);
+  if(res.finChange) applyFinChange(res.finChange);
+  addFlag(res.flag);
+  if(pass) {
+    state.rank = '경사';
+    state.rankHon = 1;
+    showToast('🎉 경사 진급!');
+  }
+
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = `
+    <div class="result-box" style="border-color:${pass?'var(--success)':'var(--danger)'}">
+      <h4>${pass?'🎉 합격!':'😔 불합격'}</h4>
+      <p>${res.text}</p>
+      <div class="result-effects">${buildEffChips(res.eff)}</div>
+      <button class="btn-next" onclick="nextEvent()">다음 →</button>
+    </div>`;
+  updateSidebar();
+};
+
+// ── YEAR SUMMARY ──────────────────────────────────
+function showYearSummary(newYear) {
+  state.year = newYear;
+  state.age++;
+  // Rank progression
+  if(newYear === 3 && state.rank === '순경') {
+    state.rank = '경장'; state.rankHon = 1; state.finance.salary += 40;
+    showToast('🎖️ 경장 진급! 급여 +40만원');
+  }
+  if(newYear === 5 && state.rank === '경장') {
+    // 경사는 시험으로 결정
+  }
+
+  const monthly = state.finance.salary - state.finance.expense;
+  state.finance.asset += monthly * 12;
+
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = `
+    <div class="year-summary">
+      <h3>📅 ${newYear - 1}년차 마무리</h3>
+      <div class="summary-grid">
+        <div class="summary-item"><div class="s-val">${state.stats.health}</div><div class="s-lab">💪 체력</div></div>
+        <div class="summary-item"><div class="s-val">${state.stats.stress}</div><div class="s-lab">😰 스트레스</div></div>
+        <div class="summary-item"><div class="s-val">${state.stats.grade}</div><div class="s-lab">📚 성적</div></div>
+        <div class="summary-item"><div class="s-val">${state.stats.network}</div><div class="s-lab">🤝 인맥</div></div>
+        <div class="summary-item"><div class="s-val">${state.stats.justice}</div><div class="s-lab">⚖️ 정의감</div></div>
+        <div class="summary-item"><div class="s-val">${fmtMoney(state.finance.asset)}</div><div class="s-lab">💰 총 자산</div></div>
+      </div>
+      <p style="color:var(--subtext);margin-top:16px;font-size:.9rem;">
+        현재 직급: ${state.rank} ${state.rankHon}호봉 / 월 급여: ${state.finance.salary}만원<br>
+        월 저축: ${monthly}만원 / 획득 경험: ${state.flags.length}개
+      </p>
+    </div>
+    <button class="btn-next" onclick="nextEvent()">${newYear}년차 시작 →</button>`;
+  updateSidebar();
+}
+
+// ── BRANCH SCREEN ─────────────────────────────────
+window.showBranchScreen = function() {
+  showScreen('screen-branch');
+  const grid = document.getElementById('branch-grid');
+  grid.innerHTML = '';
+  BRANCHES.forEach(b => {
+    const locked = checkBranchLocked(b);
+    const card = document.createElement('div');
+    card.className = 'branch-card' + (locked ? ' locked' : '');
+    card.innerHTML = `
+      <div class="b-icon">${b.icon}</div>
+      <h3>${b.name}</h3>
+      <p>${b.desc}</p>
+      <div class="${locked ? 'locked-msg' : 'cond'}">${b.cond_text}</div>
+      ${!locked ? '<span class="unlock-badge">✓ 가능</span>' : ''}
+    `;
+    if(!locked) card.onclick = () => selectBranch(b);
+    grid.appendChild(card);
+  });
+};
+
+function checkBranchLocked(b) {
+  if(!b.cond) return false;
+  if(b.cond.health  && state.stats.health  < b.cond.health)  return true;
+  if(b.cond.grade   && state.stats.grade   < b.cond.grade)   return true;
+  if(b.cond.network && state.stats.network < b.cond.network) return true;
+  if(b.cond.justice && state.stats.justice < b.cond.justice) return true;
+  if(b.cond.flag    && !state.flags.includes(b.cond.flag))   return true;
+  return false;
+}
+
+function selectBranch(b) {
+  addFlag('전환_' + b.id);
+  showEnding();
+}
+
+// ── ENDING ────────────────────────────────────────
+function showEnding() {
+  showScreen('screen-ending');
+  const s = state.stats;
+  const f = state.flags;
+
+  let ending = ENDINGS[ENDINGS.length - 1]; // default: normal
+  for(const e of ENDINGS) {
+    if(e.cond(s, f)) { ending = e; break; }
+  }
+
+  const card = document.getElementById('ending-card');
+  card.innerHTML = `
+    <div class="e-icon">${ending.icon}</div>
+    <h2>${ending.name} 엔딩</h2>
+    <p>${ending.desc}</p>
+    <p style="color:var(--accent);margin-bottom:20px;">${ending.finNote}</p>
+    <div class="ending-stats">
+      <div class="ending-stat"><div class="val">${s.health}</div><div class="lbl">💪 체력</div></div>
+      <div class="ending-stat"><div class="val">${s.stress}</div><div class="lbl">😰 스트레스</div></div>
+      <div class="ending-stat"><div class="val">${s.grade}</div><div class="lbl">📚 성적</div></div>
+      <div class="ending-stat"><div class="val">${s.network}</div><div class="lbl">🤝 인맥</div></div>
+      <div class="ending-stat"><div class="val">${s.justice}</div><div class="lbl">⚖️ 정의감</div></div>
+      <div class="ending-stat"><div class="val">${fmtMoney(state.finance.asset)}</div><div class="lbl">💰 자산</div></div>
+    </div>
+    <p style="color:var(--subtext);margin-bottom:20px;font-size:.85rem;">획득 경험 ${f.length}개 · 진입경로: ${state.path ? state.path.name : '-'}</p>
+    <button class="btn-restart" onclick="location.reload()">🔄 다시 시작</button>
+    <button class="btn-restart" onclick="showBranchScreen()" style="background:#27ae60;">🔀 직군 전환 선택</button>
+  `;
+}
+
+// ── INIT ──────────────────────────────────────────
+buildPathGrid();
+</script>
+</body>
+</html>
