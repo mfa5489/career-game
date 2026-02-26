@@ -1,0 +1,256 @@
+{
+  "ch3_y1q1": {
+    "chapter": 3,
+    "title": "대학 1학년 1학기",
+    "description": "2025년 3월, 경찰행정학과에 입학했습니다.\n\n신입생 오리엔테이션이 시작되고,\n선배들이 학과 생활과 진로에 대해 설명합니다.",
+    "choices": [
+      {
+        "text": "열심히 하겠습니다!",
+        "color": "green",
+        "next": "ch3_y1summer",
+        "effects": { "stress": 5, "network": 10, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y1summer": {
+    "chapter": 3,
+    "title": "1학년 여름방학",
+    "description": "첫 학기가 끝나고 여름방학이 시작되었습니다.\n\n부모님의 부담을 덜기 위해 아르바이트를 할까요?",
+    "choices": [
+      {
+        "text": "아르바이트 (돈 +80만원, 스트레스 +10)",
+        "color": "blue",
+        "next": "ch3_y1q2",
+        "effects": { "money": 800000, "stress": 10 }
+      },
+      {
+        "text": "체력 훈련 (체력 +15)",
+        "color": "green",
+        "next": "ch3_y1q2",
+        "effects": { "health": 15, "parentSpending": 500000 }
+      }
+    ]
+  },
+  "ch3_y1q2": {
+    "chapter": 3,
+    "title": "1학년 2학기",
+    "description": "2학기가 시작되었습니다.\n\n경찰 실무 동아리에서 모집 공고를 냅니다.",
+    "choices": [
+      {
+        "text": "동아리 가입 (인맥 +15, 성적 +5)",
+        "color": "green",
+        "next": "ch3_y1winter",
+        "effects": { "network": 15, "grade": 5, "parentSpending": 4000000 }
+      },
+      {
+        "text": "혼자 공부 (성적 +10)",
+        "color": "blue",
+        "next": "ch3_y1winter",
+        "effects": { "grade": 10, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y1winter": {
+    "chapter": 3,
+    "title": "1학년 겨울방학",
+    "description": "겨울방학이 되었습니다.\n\n군 복무 계획을 세울 시간입니다.",
+    "choices": [
+      {
+        "text": "지금 입대 (2년 후 복학)",
+        "color": "blue",
+        "next": "ch3_y2q1",
+        "flag": "military_now",
+        "effects": { "stress": -20, "health": 20 }
+      },
+      {
+        "text": "2학년까지 마치고 입대",
+        "color": "green",
+        "next": "ch3_y2q1",
+        "flag": "military_later"
+      }
+    ]
+  },
+  "ch3_y2q1": {
+    "chapter": 3,
+    "title": "대학 2학년 1학기",
+    "description": "2학년이 되었습니다.\n전공 수업이 본격적으로 시작됩니다.",
+    "choices": [
+      {
+        "text": "열심히 공부 (성적 +15)",
+        "color": "green",
+        "next": "ch3_y2summer",
+        "effects": { "grade": 15, "stress": 10, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y2summer": {
+    "chapter": 3,
+    "title": "2학년 여름방학",
+    "description": "여름방학에 경찰서 인턴십 기회를 얻었습니다.",
+    "choices": [
+      {
+        "text": "인턴 참여 (인맥 +20)",
+        "color": "green",
+        "next": "ch3_y2q2",
+        "effects": { "network": 20, "health": 10, "stress": 15 }
+      }
+    ]
+  },
+  "ch3_y2q2": {
+    "chapter": 3,
+    "title": "2학년 2학기",
+    "description": "같은 과 선배가 소개팅을 제안합니다.",
+    "choices": [
+      {
+        "text": "만나본다 (스트레스 -15)",
+        "color": "yellow",
+        "next": "ch3_y2winter",
+        "flag": "dating",
+        "effects": { "stress": -15, "money": -300000 }
+      },
+      {
+        "text": "공부에 집중 (성적 +10)",
+        "color": "blue",
+        "next": "ch3_y2winter",
+        "effects": { "grade": 10, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y2winter": {
+    "chapter": 3,
+    "title": "2학년 겨울방학",
+    "description": "이제 본격적으로 경찰 시험 준비를 시작해야 합니다.",
+    "choices": [
+      {
+        "text": "학원 등록 (성적 +20)",
+        "color": "green",
+        "next": "ch3_y3q1",
+        "effects": { "grade": 20, "stress": 15, "money": -1000000 }
+      },
+      {
+        "text": "독학 (성적 +10)",
+        "color": "blue",
+        "next": "ch3_y3q1",
+        "effects": { "grade": 10, "stress": 5 }
+      }
+    ]
+  },
+  "ch3_y3q1": {
+    "chapter": 3,
+    "title": "대학 3학년 1학기",
+    "description": "3학년이 되었습니다.\n전공 수업이 더욱 깊어집니다.",
+    "choices": [
+      {
+        "text": "열심히 수강 (성적 +10)",
+        "color": "green",
+        "next": "ch3_y3summer",
+        "effects": { "grade": 10, "justice": 5, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y3summer": {
+    "chapter": 3,
+    "title": "3학년 여름방학",
+    "description": "경찰 교육원 견학 프로그램에 참여했습니다.",
+    "media": "training",
+    "choices": [
+      {
+        "text": "의욕이 생긴다!",
+        "color": "green",
+        "next": "ch3_y3q2",
+        "effects": { "justice": 10, "stress": -10 }
+      }
+    ]
+  },
+  "ch3_y3q2": {
+    "chapter": 3,
+    "title": "3학년 2학기",
+    "description": "중고차를 살까 고민입니다.",
+    "choices": [
+      {
+        "text": "중고차 구매 (돈 -500만원)",
+        "color": "yellow",
+        "next": "ch3_y3winter",
+        "flag": "car_bought",
+        "effects": { "money": -5000000, "stress": 10 }
+      },
+      {
+        "text": "참는다",
+        "color": "green",
+        "next": "ch3_y3winter"
+      }
+    ]
+  },
+  "ch3_y3winter": {
+    "chapter": 3,
+    "title": "3학년 겨울방학",
+    "description": "등록금과 생활비가 부족합니다.",
+    "choices": [
+      {
+        "text": "부모님께 부탁",
+        "color": "blue",
+        "next": "ch3_y4q1",
+        "effects": { "parentSpending": 2000000, "stress": 10 }
+      },
+      {
+        "text": "학자금 대출",
+        "color": "yellow",
+        "next": "ch3_y4q1",
+        "effects": { "money": 4000000, "stress": 15 }
+      }
+    ]
+  },
+  "ch3_y4q1": {
+    "chapter": 3,
+    "title": "대학 4학년 1학기",
+    "description": "드디어 4학년입니다!\n본격 시험 준비에 집중해야 합니다.",
+    "choices": [
+      {
+        "text": "시험 준비 (성적 +15)",
+        "color": "green",
+        "next": "ch3_y4summer",
+        "effects": { "grade": 15, "stress": 20, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_y4summer": {
+    "chapter": 3,
+    "title": "4학년 여름방학",
+    "description": "마지막 인턴십 기회입니다.",
+    "media": "patrol",
+    "choices": [
+      {
+        "text": "열심히 참여",
+        "color": "green",
+        "next": "ch3_y4q2",
+        "effects": { "network": 15, "health": 10 }
+      }
+    ]
+  },
+  "ch3_y4q2": {
+    "chapter": 3,
+    "title": "4학년 2학기",
+    "description": "졸업 논문을 준비합니다.",
+    "choices": [
+      {
+        "text": "열심히 작성",
+        "color": "green",
+        "next": "ch3_graduate",
+        "effects": { "grade": 10, "justice": 5, "parentSpending": 4000000 }
+      }
+    ]
+  },
+  "ch3_graduate": {
+    "chapter": 3,
+    "title": "🎓 대학 졸업!",
+    "description": "2029년 2월, 대학을 졸업했습니다!\n\n부모님이 지금까지 지출한 총액은 약 3,200만원입니다.\n\n꼭 합격해서 보답하세요!",
+    "choices": [
+      {
+        "text": "감사합니다...",
+        "color": "green",
+        "next": "ch4_intro",
+        "effects": { "justice": 10, "stress": 10 }
+      }
+    ]
+  }
+}
