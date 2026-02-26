@@ -1,0 +1,141 @@
+{
+  "ch4_intro": {
+    "chapter": 4,
+    "title": "경찰 공무원 채용 시험",
+    "description": "2029년 3월, 드디어 경찰 공무원 채용 시험 원서 접수가 시작되었습니다.\n\n지금까지 준비한 모든 것을 쏟아부을 시간입니다.\n\n필기시험 → 체력시험 → 면접 순서로 진행됩니다.",
+    "media": "exam",
+    "choices": [
+      {
+        "text": "원서 접수하기",
+        "color": "green",
+        "next": "ch4_written_exam"
+      }
+    ]
+  },
+  "ch4_written_exam": {
+    "chapter": 4,
+    "title": "📝 필기시험",
+    "description": "시험 과목:\n- 형사법 (25%)\n- 경찰학 (25%)\n- 헌법 (20%)\n- 한국사 (15%)\n- 영어 (15%)\n\n합격선: 평균 60점 이상",
+    "choices": [
+      {
+        "text": "시험 시작!",
+        "color": "green",
+        "next": "ch4_written_result",
+        "effects": { "stress": 20 }
+      }
+    ]
+  },
+  "ch4_written_result": {
+    "chapter": 4,
+    "title": "필기시험 결과",
+    "description": "성적 발표일...\n\n두근두근...\n\n(당신의 성적 스탯이 60 이상이면 합격!)",
+    "choices": [
+      {
+        "text": "✅ 합격!",
+        "color": "green",
+        "next": "ch4_fitness_intro",
+        "effects": { "stress": -15, "justice": 10 }
+      },
+      {
+        "text": "❌ 불합격 - 재도전",
+        "color": "red",
+        "next": "ch4_retry",
+        "effects": { "stress": 30 }
+      }
+    ]
+  },
+  "ch4_retry": {
+    "chapter": 4,
+    "title": "재도전 기회",
+    "description": "불합격했습니다...\n\n하지만 포기하지 마세요!\n다시 6개월 준비해서 재도전할 수 있습니다.",
+    "choices": [
+      {
+        "text": "재도전한다!",
+        "color": "green",
+        "next": "ch4_written_exam",
+        "effects": { "grade": 15, "stress": 10 }
+      }
+    ]
+  },
+  "ch4_fitness_intro": {
+    "chapter": 4,
+    "title": "⚡ 체력시험 안내",
+    "description": "필기시험 합격을 축하합니다!\n\n이제 체력시험입니다.\n\n2025년 기준 합격 기준:\n남성: 윗몸일으키기 58개 이상\n여성: 윗몸일으키기 50개 이상",
+    "choices": [
+      {
+        "text": "체력시험 시작",
+        "color": "green",
+        "next": "ch4_fitness_test"
+      }
+    ]
+  },
+  "ch4_fitness_test": {
+    "chapter": 4,
+    "title": "체력시험",
+    "description": "1분 동안 윗몸일으키기를 합니다.\n\n현재 당신은 몇 개 할 수 있나요?",
+    "type": "input",
+    "inputType": "number",
+    "variable": "fitness_situp",
+    "min": 0,
+    "max": 100,
+    "next": "ch4_fitness_result"
+  },
+  "ch4_fitness_result": {
+    "chapter": 4,
+    "title": "체력시험 결과",
+    "description": "측정 결과...\n\n(입력한 수치가 기준 이상이면 합격!)",
+    "choices": [
+      {
+        "text": "✅ 합격!",
+        "color": "green",
+        "next": "ch4_interview",
+        "effects": { "health": 10, "stress": -10 }
+      },
+      {
+        "text": "❌ 불합격 - 재도전",
+        "color": "red",
+        "next": "ch4_fitness_retry",
+        "effects": { "stress": 20 }
+      }
+    ]
+  },
+  "ch4_fitness_retry": {
+    "chapter": 4,
+    "title": "체력 훈련",
+    "description": "체력이 부족합니다.\n\n6개월 동안 집중 훈련하시겠습니까?",
+    "choices": [
+      {
+        "text": "훈련한다!",
+        "color": "green",
+        "next": "ch4_fitness_test",
+        "effects": { "health": 20, "stress": 15 }
+      }
+    ]
+  },
+  "ch4_interview": {
+    "chapter": 4,
+    "title": "🎤 면접 시험",
+    "description": "마지막 관문, 면접입니다.\n\n면접관: \"경찰이 되고 싶은 이유가 무엇입니까?\"",
+    "choices": [
+      {
+        "text": "\"지역 사회를 안전하게 지키고 싶습니다!\"",
+        "color": "green",
+        "next": "ch4_final_result",
+        "effects": { "justice": 10, "stress": 10 }
+      }
+    ]
+  },
+  "ch4_final_result": {
+    "chapter": 4,
+    "title": "🎉 최종 합격!",
+    "description": "축하합니다!\n\n경찰 공무원 채용 시험에 최종 합격했습니다!\n\n2029년 10월, 중앙경찰학교에 입교합니다!",
+    "media": "ceremony",
+    "choices": [
+      {
+        "text": "경찰 교육원으로!",
+        "color": "green",
+        "next": "ch5_intro"
+      }
+    ]
+  }
+}
