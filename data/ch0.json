@@ -1,0 +1,74 @@
+{
+  "start": {
+    "chapter": 0,
+    "title": "나는 경찰이다 🚔",
+    "description": "당신은 경찰관을 꿈꾸는 17세 고등학생입니다.\n이 게임은 경찰 생활안전 직군으로 가는 현실적인 진로를 체험하는 시뮬레이션입니다.\n\n모든 선택이 당신의 미래를 바꿉니다.",
+    "media": "intro",
+    "choices": [
+      {
+        "text": "게임 시작하기",
+        "color": "green",
+        "next": "gender_select"
+      }
+    ]
+  },
+  "gender_select": {
+    "chapter": 0,
+    "title": "캐릭터 생성",
+    "description": "당신의 성별을 선택하세요.",
+    "choices": [
+      {
+        "text": "남성",
+        "color": "blue",
+        "next": "name_input",
+        "flag": "gender_male"
+      },
+      {
+        "text": "여성",
+        "color": "blue",
+        "next": "name_input",
+        "flag": "gender_female"
+      }
+    ]
+  },
+  "name_input": {
+    "chapter": 0,
+    "title": "이름 입력",
+    "description": "당신의 이름을 입력하세요.",
+    "type": "input",
+    "inputType": "text",
+    "variable": "name",
+    "next": "personality_select"
+  },
+  "personality_select": {
+    "chapter": 0,
+    "title": "성향 선택",
+    "description": "당신의 성향을 선택하세요.\n각 성향은 초기 스탯에 영향을 줍니다.",
+    "choices": [
+      {
+        "text": "정의파 (정의감 +20, 체력 +10)",
+        "color": "yellow",
+        "next": "ch1_start",
+        "effects": { "justice": 20, "health": 10 }
+      },
+      {
+        "text": "분석파 (성적 +20, 인맥 -10)",
+        "color": "blue",
+        "next": "ch1_start",
+        "effects": { "grade": 20, "network": -10 }
+      },
+      {
+        "text": "체력파 (체력 +20, 스트레스 -10)",
+        "color": "green",
+        "next": "ch1_start",
+        "effects": { "health": 20, "stress": -10 }
+      },
+      {
+        "text": "공감파 (인맥 +20, 정의감 +10)",
+        "color": "green",
+        "next": "ch1_start",
+        "effects": { "network": 20, "justice": 10 }
+      }
+    ]
+  }
+}
