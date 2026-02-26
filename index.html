@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://www.genspark.ai/api/files/s/EWEOW8Lj -->
+<html lang="ko" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나는 경찰이다 🚔 - 진로체험 시뮬레이션 (v7.0 Final Engine)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./index_files/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./index_files/all.min.css">
+    <style>
+      :root {
+        --primary-gold: #d4af37;
+        --primary-red: #c41e3a;
+        --police-navy: #0a192f;
+        --dark-bg: #1a1a1a;
+        --card-bg: #252525;
+        --text-main: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --btn-green: #2ecc71;
+        --btn-red: #e74c3c;
+        --btn-blue: #3498db;
+        --btn-yellow: #f1c40f;
+        --btn-gray: #7f8c8d;
+      }
+
+      * {
+        box-sizing: border-box;
+        user-select: none;
+      }
+
+      body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Layout */
+      .game-container {
+        display: flex;
+        flex: 1;
+        height: calc(100vh - 80px); /* Subtract footer height */
+        overflow: hidden;
+      }
+
+      /* Left Sidebar - Character */
+      .sidebar {
+        width: 320px;
+        background-color: #151515;
+        border-right: 2px solid var(--primary-gold);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 10;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .character-info {
+        text-align: center;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #333;
+      }
+
+      .char-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-gold);
+        margin-bottom: 5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .char-detail {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+      }
+
+      .game-progress {
+        font-size: 12px;
+        color: #888;
+        margin-top: 10px;
+        width: 100%;
+        text-align: left;
+      }
+
+      .char-img-container {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        margin: 20px 0;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(circle at bottom, #333 0%, #151515 70%);
+        border-radius: 8px;
+        border: 1px solid #333;
+      }
+
+      /* Simple CSS Silhouette */
+      .silhouette {
+        width: 160px;
+        height: 400px;
+        background-color: #444;
+        border-radius: 80px 80px 0 0;
+        position: relative;
+        transition: all 0.5s ease;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .silhouette::before {
+        /* Head */
+        content: '';
+        position: absolute;
+        top: -70px;
+        left: 15px;
+        width: 130px;
+        height: 130px;
+        background-color: inherit;
+        border-radius: 50%;
+        box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Gender Specifics */
+      .silhouette.male {
+        width: 170px;
+      }
+      .silhouette.female {
+        width: 150px;
+        border-radius: 75px 75px 0 0;
+      }
+
+      /* Uniform Colors */
+      .uniform-highschool {
+        background: linear-gradient(135deg, #3a4a5a, #2c3e50);
+      }
+      .uniform-uni {
+        background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+      }
+      .uniform-police {
+        background: linear-gradient(135deg, #0a192f, #112240);
+        border: 2px solid var(--primary-gold);
+      }
+
+      /* Center - Event Area */
+      .main-content {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-image: radial-gradient(circle at center, #2a2a2a 0%, #1a1a1a 100%);
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .main-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      .main-content::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 4px;
+      }
+
+      .chapter-badge {
+        background: linear-gradient(45deg, var(--primary-red), #800000);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        box-shadow: 0 0 15px rgba(196, 30, 58, 0.6);
+        animation: fadeIn 0.5s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        letter-spacing: 1px;
+      }
+
+      .event-card {
+        background: rgba(30, 30, 30, 0.95);
+        border: 2px solid var(--primary-gold);
+        border-radius: 12px;
+        padding: 50px;
+        max-width: 900px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        animation: slideUp 0.5s ease;
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+
+      .event-card::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 8px;
+        pointer-events: none;
+      }
+
+      .event-title {
+        font-size: 32px;
+        color: var(--primary-gold);
+        margin-bottom: 25px;
+        font-weight: 900;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        letter-spacing: -0.5px;
+      }
+
+      .event-desc {
+        font-size: 18px;
+        line-height: 1.8;
+        margin-bottom: 40px;
+        white-space: pre-line;
+        color: #eee;
+      }
+
+      /* Choices */
+      .choices-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+        width: 100%;
+      }
+
+      .choice-btn {
+        padding: 20px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      .choice-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+      }
+
+      .choice-btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
+        pointer-events: none;
+      }
+
+      .btn-green {
+        background: linear-gradient(to bottom, #2ecc71, #27ae60);
+        border-bottom: 4px solid #219150;
+      }
+      .btn-red {
+        background: linear-gradient(to bottom, #e74c3c, #c0392b);
+        border-bottom: 4px solid #a93226;
+      }
+      .btn-blue {
+        background: linear-gradient(to bottom, #3498db, #2980b9);
+        border-bottom: 4px solid #2471a3;
+      }
+      .btn-yellow {
+        background: linear-gradient(to bottom, #f1c40f, #f39c12);
+        border-bottom: 4px solid #d68910;
+        color: #222;
+        text-shadow: none;
+      }
+      .btn-gray {
+        background: linear-gradient(to bottom, #95a5a6, #7f8c8d);
+        border-bottom: 4px solid #626567;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      .choice-btn:hover:not(.btn-gray) {
+        filter: brightness(1.1);
+      }
+      .btn-green:hover:not(.btn-gray) {
+        box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+      }
+      .btn-red:hover:not(.btn-gray) {
+        box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+      }
+      .btn-blue:hover:not(.btn-gray) {
+        box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
+      }
+      .btn-yellow:hover:not(.btn-gray) {
+        box-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
+      }
+
+      /* Bottom Stats Bar */
+      .stats-bar {
+        height: 90px;
+        background-color: #111;
+        border-top: 3px solid var(--primary-gold);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        z-index: 20;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
+      }
+
+      .stat-group {
+        display: flex;
+        gap: 30px;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100px;
+        position: relative;
+      }
+
+      .stat-icon {
+        font-size: 20px;
+        margin-bottom: 8px;
+        filter: drop-shadow(0 0 5px currentColor);
+      }
+
+      .stat-bar-bg {
+        width: 100%;
+        height: 10px;
+        background-color: #333;
+        border-radius: 5px;
+        overflow: hidden;
+        border: 1px solid #444;
+      }
+
+      .stat-bar-fill {
+        height: 100%;
+        background-color: var(--primary-gold);
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 10px currentColor;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 5px;
+        font-weight: 500;
+      }
+
+      .stat-value-text {
+        position: absolute;
+        top: -20px;
+        right: 0;
+        font-size: 12px;
+        color: white;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .stat-item:hover .stat-value-text {
+        opacity: 1;
+      }
+
+      .money-display {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-gold);
+        min-width: 180px;
+        text-align: right;
+        background: #222;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        font-family: 'Courier New', monospace;
+        letter-spacing: -1px;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 100;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s;
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        width: 80%;
+        max-width: 1000px;
+        background: #000;
+        border: 2px solid var(--primary-gold);
+        position: relative;
+        box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+      }
+
+      .video-container {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .close-modal-btn {
+        margin-top: 25px;
+        padding: 12px 40px;
+        background: transparent;
+        border: 2px solid var(--primary-gold);
+        color: var(--primary-gold);
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .close-modal-btn:hover {
+        background: var(--primary-gold);
+        color: black;
+        box-shadow: 0 0 20px var(--primary-gold);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Input Styles */
+      .game-input {
+        width: 100%;
+        padding: 20px;
+        margin-bottom: 30px;
+        background: #333;
+        border: 2px solid #555;
+        color: white;
+        font-size: 20px;
+        border-radius: 8px;
+        text-align: center;
+        transition: border-color 0.3s;
+      }
+
+      .game-input:focus {
+        outline: none;
+        border-color: var(--primary-gold);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      }
+
+      /* Notification */
+      .notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        background-color: rgba(10, 25, 47, 0.95);
+        border-left: 5px solid var(--primary-gold);
+        padding: 20px 30px;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 200;
+        transform: translateX(150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 300px;
+      }
+      .notification.show {
+        transform: translateX(0);
+      }
+      .notif-icon {
+        font-size: 24px;
+        color: var(--primary-gold);
+      }
+      .notif-content {
+        display: flex;
+        flex-direction: column;
+      }
+      .notif-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: var(--primary-gold);
+      }
+      .notif-msg {
+        font-size: 14px;
+        color: #ddd;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .game-container {
+          flex-direction: column;
+          height: auto;
+          overflow-y: auto;
+        }
+        .sidebar {
+          width: 100%;
+          height: auto;
+          flex-direction: row;
+          padding: 10px;
+          border-right: none;
+          border-bottom: 2px solid var(--primary-gold);
+        }
+        .char-img-container {
+          display: none;
+        }
+        .character-info {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 5px;
+        }
+        .main-content {
+          padding: 20px;
+          min-height: 60vh;
+        }
+        .stats-bar {
+          padding: 10px;
+          height: auto;
+          flex-wrap: wrap;
+        }
+        .stat-group {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .stat-item {
+          width: 45%;
+        }
+        .money-display {
+          width: 100%;
+          text-align: center;
+          margin-top: 10px;
+        }
+        .choices-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="character-info">
+          <div class="char-name" id="display-name">캐릭터 생성</div>
+          <div class="char-detail" id="display-job">지망생</div>
+          <div class="char-detail" id="display-age">17세</div>
+          <div class="game-progress">
+            <div id="display-chapter">Chapter 0</div>
+            <div id="display-year">준비 기간</div>
+          </div>
+        </div>
+
+        <div class="char-img-container">
+          <div id="character-silhouette" class="silhouette male uniform-highschool"></div>
+        </div>
+
+        <div style="font-size: 12px; color: #666; text-align: center; margin-top: 10px">
+          나는 경찰이다 v7.0<br>Final Edition
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content" id="main-area">
+          <div class="event-card">
+            <div class="event-title">데이터 파일 로드 대기중...</div>
+            <div class="event-desc">
+              GitHub 저장소의 <code>/data/</code> 폴더에 JSON 파일들을 업로드해주세요.<br><br>
+              업로드가 완료되면 새로고침하세요.
+            </div>
+            <button class="choice-btn btn-green" onclick="location.reload()">새로고침</button>
+          </div>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-group">
+        <div class="stat-item" title="체력">
+          <i class="fas fa-heart stat-icon" style="color: #e74c3c"></i>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" id="bar-health" style="width: 50%; background-color: #e74c3c"></div>
+          </div>
+          <div class="stat-label">체력</div>
+          <div class="stat-value-text" id="val-health">50</div>
+        </div>
+        <div class="stat-item" title="스트레스">
+          <i class="fas fa-brain stat-icon" style="color: #9b59b6"></i>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" id="bar-stress" style="width: 30%; background-color: rgb(155, 89, 182);"></div>
+          </div>
+          <div class="stat-label">스트레스</div>
+          <div class="stat-value-text" id="val-stress">30</div>
+        </div>
+        <div class="stat-item" title="성적">
+          <i class="fas fa-book stat-icon" style="color: #3498db"></i>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" id="bar-grade" style="width: 50%; background-color: #3498db"></div>
+          </div>
+          <div class="stat-label">성적</div>
+          <div class="stat-value-text" id="val-grade">50</div>
+        </div>
+        <div class="stat-item" title="인맥">
+          <i class="fas fa-users stat-icon" style="color: #2ecc71"></i>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" id="bar-network" style="width: 30%; background-color: rgb(46, 204, 113);"></div>
+          </div>
+          <div class="stat-label">인맥</div>
+          <div class="stat-value-text" id="val-network">30</div>
+        </div>
+        <div class="stat-item" title="정의감">
+          <i class="fas fa-balance-scale stat-icon" style="color: #f1c40f"></i>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" id="bar-justice" style="width: 50%; background-color: #f1c40f"></div>
+          </div>
+          <div class="stat-label">정의감</div>
+          <div class="stat-value-text" id="val-justice">50</div>
+        </div>
+      </div>
+
+      <div class="money-display"><i class="fas fa-won-sign"></i> <span id="val-money">0</span></div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="modal-overlay" id="video-modal">
+      <div class="modal-content">
+        <div class="video-container">
+          <video id="game-video" controls="" playsinline="" webkit-playsinline="" width="100%" height="100%">
+            <source src="" type="video/mp4">
+            브라우저가 비디오를 지원하지 않습니다.
+          </video>
+        </div>
+      </div>
+      <button class="close-modal-btn" onclick="closeModal()">
+        닫기 / 다음으로 이동 <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <i class="fas fa-bell notif-icon"></i>
+      <div class="notif-content">
+        <div class="notif-title" id="notif-title">알림</div>
+        <div class="notif-msg" id="notif-msg">내용</div>
+      </div>
+    </div>
+
+    <script>
+      // --- GAME STATE ---
+      const gameState = {
+        chapter: 0,
+        age: 17,
+        gender: 'male',
+        name: '지망생',
+        stats: { health: 50, stress: 30, grade: 50, network: 30, justice: 50 },
+        money: 0,
+        parentSpending: 0,
+        flags: {},
+        eventData: {},
+      };
+
+      // --- ASSETS ---
+      const mediaAssets = {
+        intro: 'https://www.genspark.ai/api/files/s/K6l5akMy',
+        highschool: 'https://www.genspark.ai/api/files/s/wTjVmtQk',
+        university: 'https://www.genspark.ai/api/files/s/mKUzQxmt',
+        exam: 'https://www.genspark.ai/api/files/s/nIQ70FRh',
+        training: 'https://www.genspark.ai/api/files/s/36iL3h2T',
+        ceremony: 'https://www.genspark.ai/api/files/s/WvkwLdrw',
+        patrol: 'https://www.genspark.ai/api/files/s/ya2AryzX',
+        arrest: 'https://www.genspark.ai/api/files/s/ucFtxQe6',
+        promotion: 'https://www.genspark.ai/api/files/s/VDJswyHC',
+        crisis: 'https://www.genspark.ai/api/files/s/o5yfU1vj',
+        ending: 'https://www.genspark.ai/api/files/s/il9yYczr',
+        career: 'https://www.genspark.ai/api/files/s/4egUNoHG',
+      };
+
+      // --- INITIALIZATION ---
+      window.onload = async () => {
+        updateUI();
+        await loadAllEventData();
+        showEvent('start');
+      };
+
+      async function loadAllEventData() {
+        const files = ['ch0.json', 'ch1.json', 'ch2.json', 'ch3.json', 'ch4.json', 'ch5.json', 'ch6.json'];
+        try {
+          // In a real scenario, fetch these files. For this single-file demo, we assume they exist or handle errors.
+          // Since we are building the engine, we will stub the loader or use fetch.
+          // The user will upload JSON files to /data/ folder.
+
+          for (const file of files) {
+            try {
+              const response = await fetch(`data/${file}`);
+              if (response.ok) {
+                const data = await response.json();
+                Object.assign(gameState.eventData, data);
+              } else {
+                console.warn(`Could not load data/${file}`);
+              }
+            } catch (e) {
+              console.warn(`Error loading data/${file}:`, e);
+            }
+          }
+        } catch (e) {
+          console.error('Failed to load event data', e);
+        }
+      }
+
+      // --- CORE ENGINE ---
+      function showEvent(eventId) {
+        // Fallback if data not loaded yet
+        if (!gameState.eventData[eventId]) {
+          // If start event is missing (e.g. JSON not uploaded yet), show a placeholder
+          if (eventId === 'start') {
+            renderPlaceholder();
+            return;
+          }
+          console.error(`Event ${eventId} not found`);
+          return;
+        }
+
+        const data = gameState.eventData[eventId];
+
+        // Update Chapter/Age if specified
+        if (data.chapter !== undefined) {
+          gameState.chapter = data.chapter;
+          updateSidebar();
+        }
+
+        // Handle Media Trigger
+        if (data.media && mediaAssets[data.media]) {
+          showVideo(mediaAssets[data.media]);
+        }
+
+        renderEventContent(data);
+      }
+
+      function renderEventContent(data) {
+        const mainArea = document.getElementById('main-area');
+
+        // Handle Input Type Event
+        if (data.type === 'input') {
+          mainArea.innerHTML = `
+            <div class="event-card">
+              <div class="chapter-badge">CHAPTER ${gameState.chapter}</div>
+              <div class="event-title">${data.title}</div>
+              <div class="event-desc">${data.description}</div>
+              <input type="${data.inputType || 'text'}" id="user-input" class="game-input" placeholder="입력해주세요" ${data.min ? `min="${data.min}"` : ''} ${data.max ? `max="${data.max}"` : ''}>
+              <div class="choices-container">
+                <button class="choice-btn btn-green" onclick="submitInput('${data.variable}', '${data.next}')">
+                  확인 <i class="fas fa-check"></i>
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        // Normal Event
+        let choicesHtml = '';
+        if (data.choices) {
+          choicesHtml = data.choices
+            .map((c) => {
+              const disabledClass = c.disabled ? 'btn-gray' : `btn-${c.color || 'blue'}`;
+              const clickHandler = c.disabled
+                ? `alert('${c.disabledMessage || '선택할 수 없습니다.'}')`
+                : `handleChoice('${c.next}', ${JSON.stringify(c.effects || {}).replace(/"/g, '&quot;')}, '${c.flag || ''}')`;
+
+              return `
+              <button class="choice-btn ${disabledClass}" onclick="${clickHandler}">
+                ${c.text}
+                ${c.disabled ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-chevron-right"></i>'}
+              </button>
+            `;
+            })
+            .join('');
+        }
+
+        mainArea.innerHTML = `
+          <div class="event-card">
+            <div class="chapter-badge">CHAPTER ${gameState.chapter}</div>
+            <div class="event-title">${data.title}</div>
+            <div class="event-desc">${data.description}</div>
+            <div class="choices-container">
+              ${choicesHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      function handleChoice(nextId, effects, flag) {
+        // Apply Effects
+        if (effects) {
+          for (const [key, val] of Object.entries(effects)) {
+            if (gameState.stats[key] !== undefined) {
+              gameState.stats[key] = Math.min(100, Math.max(0, gameState.stats[key] + val));
+              notifyStatChange(key, val);
+            } else if (key === 'money') {
+              gameState.money += val;
+              notifyMoneyChange(val);
+            } else if (key === 'parentSpending') {
+              gameState.parentSpending += val;
+            }
+          }
+        }
+
+        // Set Flag
+        if (flag) {
+          gameState.flags[flag] = true;
+        }
+
+        updateUI();
+        checkTriggers();
+
+        if (nextId) {
+          showEvent(nextId);
+        }
+      }
+
+      function submitInput(variable, nextId) {
+        const val = document.getElementById('user-input').value;
+        if (!val) return alert('값을 입력해주세요.');
+
+        if (variable === 'name') {
+          gameState.name = val;
+          document.getElementById('display-name').innerText = val;
+        } else {
+          gameState.flags[variable] = val;
+        }
+
+        showEvent(nextId);
+      }
+
+      function checkTriggers() {
+        // Simple trigger system
+        if (gameState.stats.health <= 10) notify('건강 위험', '체력이 너무 낮아 입원 치료가 필요합니다.');
+        if (gameState.stats.stress >= 90) notify('번아웃 경고', '스트레스가 극심하여 휴식이 필요합니다.');
+        if (gameState.money <= -1000000) notify('재정 위기', '잔고가 위험 수준입니다. 대출이 필요할 수 있습니다.');
+      }
+
+      // --- UI UPDATES ---
+      function updateUI() {
+        // Stats
+        updateStatBar('health', gameState.stats.health);
+        updateStatBar('stress', gameState.stats.stress);
+        updateStatBar('grade', gameState.stats.grade);
+        updateStatBar('network', gameState.stats.network);
+        updateStatBar('justice', gameState.stats.justice);
+
+        // Money
+        document.getElementById('val-money').innerText = gameState.money.toLocaleString();
+
+        updateSidebar();
+      }
+
+      function updateStatBar(key, val) {
+        document.getElementById(`bar-${key}`).style.width = `${val}%`;
+        document.getElementById(`val-${key}`).innerText = val;
+      }
+
+      function updateSidebar() {
+        // Silhouette based on chapter/gender
+        const sil = document.getElementById('character-silhouette');
+        sil.className = `silhouette ${gameState.gender}`;
+
+        if (gameState.chapter >= 5) sil.classList.add('uniform-police');
+        else if (gameState.chapter >= 3) sil.classList.add('uniform-uni');
+        else sil.classList.add('uniform-highschool');
+
+        // Text Info
+        let job = '지망생';
+        if (gameState.chapter >= 3) job = '대학생/수험생';
+        if (gameState.chapter >= 5) job = '교육생';
+        if (gameState.chapter >= 6) job = '경찰공무원';
+
+        document.getElementById('display-job').innerText = job;
+        document.getElementById('display-chapter').innerText = `Chapter ${gameState.chapter}`;
+      }
+
+      // --- NOTIFICATIONS ---
+      function notifyStatChange(stat, val) {
+        if (val === 0) return;
+        const nameMap = { health: '체력', stress: '스트레스', grade: '성적', network: '인맥', justice: '정의감' };
+        const msg = `${nameMap[stat]} ${val > 0 ? '+' : ''}${val}`;
+        notify('스탯 변경', msg);
+      }
+
+      function notifyMoneyChange(val) {
+        if (val === 0) return;
+        const msg = `${val > 0 ? '+' : ''}${val.toLocaleString()}원`;
+        notify('재정 변경', msg);
+      }
+
+      function notify(title, msg) {
+        const el = document.getElementById('notification');
+        document.getElementById('notif-title').innerText = title;
+        document.getElementById('notif-msg').innerText = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+      }
+
+      // --- VIDEO MODAL ---
+      function showVideo(url) {
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('game-video');
+        video.src = url;
+        modal.style.display = 'flex';
+        video.play().catch((e) => console.log('Auto-play prevented'));
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('game-video');
+        video.pause();
+        modal.style.display = 'none';
+      }
+
+      function renderPlaceholder() {
+        document.getElementById('main-area').innerHTML = `
+          <div class="event-card">
+            <div class="event-title">데이터 파일 로드 대기중...</div>
+            <div class="event-desc">
+              GitHub 저장소의 <code>/data/</code> 폴더에 JSON 파일들을 업로드해주세요.<br><br>
+              업로드가 완료되면 새로고침하세요.
+            </div>
+            <button class="choice-btn btn-green" onclick="location.reload()">새로고침</button>
+          </div>
+        `;
+      }
+    </script>
+  <script defer="" src="./index_files/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9d3c92b0ff88a7b4&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.9.1&quot;,&quot;token&quot;:&quot;4edd5f8ec12a48cfa682ab8261b80a79&quot;}" crossorigin="anonymous"></script>
+
+
+</body></html>
