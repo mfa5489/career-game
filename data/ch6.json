@@ -1,0 +1,590 @@
+{
+  "ch6_first_day": {
+    "chapter": 6,
+    "title": "첫 출근 - 생활안전과 배치",
+    "description": "2030년 7월 1일\n\n순경으로 임용되어 지역 경찰서 생활안전과에 배치되었습니다.\n\n팀장님: \"우리 부서는 지역 주민의 안전을 책임집니다. 112 신고 대응, 순찰, 민원 처리가 주 업무야.\"",
+    "media": "patrol",
+    "choices": [
+      {
+        "text": "열심히 하겠습니다!",
+        "color": "green",
+        "next": "ch6_y1_e1"
+      }
+    ]
+  },
+  "ch6_y1_e1": {
+    "chapter": 6,
+    "title": "1년차 - 첫 112 신고",
+    "description": "첫 근무 3일째, 112 신고가 들어왔습니다.\n\n\"주거침입 신고! 단독주택!\"",
+    "choices": [
+      {
+        "text": "출동! (체력 -5, 정의감 +5)",
+        "color": "green",
+        "next": "ch6_y1_e2",
+        "effects": { "health": -5, "justice": 5, "stress": 10 }
+      }
+    ]
+  },
+  "ch6_y1_e2": {
+    "chapter": 6,
+    "title": "1년차 - 야간 순찰",
+    "description": "밤 10시, 야간 순찰 중 술 취한 사람이 행인에게 시비를 걸고 있습니다.",
+    "choices": [
+      {
+        "text": "즉시 제지 (체력 -10)",
+        "color": "green",
+        "next": "ch6_y1_e3",
+        "effects": { "health": -10, "justice": 10 }
+      },
+      {
+        "text": "응원 요청 (인맥 +5)",
+        "color": "blue",
+        "next": "ch6_y1_e3",
+        "effects": { "network": 5 }
+      }
+    ]
+  },
+  "ch6_y1_e3": {
+    "chapter": 6,
+    "title": "1년차 - 민원인 폭언",
+    "description": "민원인: \"이게 경찰이야?!\"",
+    "choices": [
+      {
+        "text": "참고 설명 (스트레스 +15)",
+        "color": "blue",
+        "next": "ch6_y1_e4",
+        "effects": { "stress": 15 }
+      }
+    ]
+  },
+  "ch6_y1_e4": {
+    "chapter": 6,
+    "title": "1년차 - 동료 저녁",
+    "description": "동료들이 저녁 식사를 제안합니다.",
+    "choices": [
+      {
+        "text": "참여 (인맥 +15)",
+        "color": "green",
+        "next": "ch6_y1_e5",
+        "effects": { "network": 15, "money": -30000 }
+      }
+    ]
+  },
+  "ch6_y1_e5": {
+    "chapter": 6,
+    "title": "1년차 - 초과 근무",
+    "description": "팀장: \"오늘 좀 남아서 정리해줄 수 있어?\"",
+    "choices": [
+      {
+        "text": "초과근무 (돈 +5만원)",
+        "color": "yellow",
+        "next": "ch6_y1_e6",
+        "effects": { "money": 50000, "stress": 10 }
+      }
+    ]
+  },
+  "ch6_y1_e6": {
+    "chapter": 6,
+    "title": "1년차 - 체력 관리",
+    "description": "체력이 떨어졌습니다. 운동할까요?",
+    "choices": [
+      {
+        "text": "헬스장 (체력 +15)",
+        "color": "green",
+        "next": "ch6_y1_e7",
+        "effects": { "health": 15, "money": -100000 }
+      }
+    ]
+  },
+  "ch6_y1_e7": {
+    "chapter": 6,
+    "title": "1년차 - 저축",
+    "description": "첫 월급 (190만원). 어떻게 사용할까요?",
+    "choices": [
+      {
+        "text": "50만원 저축",
+        "color": "green",
+        "next": "ch6_y1_e8",
+        "effects": { "money": 500000 }
+      }
+    ]
+  },
+  "ch6_y1_e8": {
+    "chapter": 6,
+    "title": "1년차 종료",
+    "description": "1년이 지났습니다. 2년차가 시작됩니다!",
+    "choices": [
+      {
+        "text": "2년차 시작!",
+        "color": "green",
+        "next": "ch6_y2_e1"
+      }
+    ]
+  },
+  "ch6_y2_e1": {
+    "chapter": 6,
+    "title": "2년차 - 승진 준비",
+    "description": "경장 승진 시험을 준비할 수 있습니다.",
+    "choices": [
+      {
+        "text": "준비 (성적 +15)",
+        "color": "green",
+        "next": "ch6_y2_e2",
+        "effects": { "grade": 15, "stress": 10 }
+      }
+    ]
+  },
+  "ch6_y2_e2": {
+    "chapter": 6,
+    "title": "2년차 - 가정폭력",
+    "description": "가정폭력 신고 출동.",
+    "media": "arrest",
+    "choices": [
+      {
+        "text": "즉시 분리 (정의감 +15)",
+        "color": "green",
+        "next": "ch6_y2_e3",
+        "effects": { "justice": 15 }
+      }
+    ]
+  },
+  "ch6_y2_e3": {
+    "chapter": 6,
+    "title": "2년차 - 축제 경비",
+    "description": "12시간 경비 근무.",
+    "choices": [
+      {
+        "text": "적극 근무 (체력 -15)",
+        "color": "green",
+        "next": "ch6_y2_e4",
+        "effects": { "health": -15, "network": 10 }
+      }
+    ]
+  },
+  "ch6_y2_e4": {
+    "chapter": 6,
+    "title": "2년차 - 후배 지도",
+    "description": "신입 순경 지도.",
+    "choices": [
+      {
+        "text": "친근하게 (인맥 +15)",
+        "color": "green",
+        "next": "ch6_y2_e5",
+        "effects": { "network": 15 }
+      }
+    ]
+  },
+  "ch6_y2_e5": {
+    "chapter": 6,
+    "title": "2년차 - 경장 진급!",
+    "description": "경장 진급! 월급 230만원!",
+    "media": "promotion",
+    "choices": [
+      {
+        "text": "감사합니다!",
+        "color": "green",
+        "next": "ch6_y2_e6",
+        "effects": { "justice": 10, "stress": -15 }
+      }
+    ]
+  },
+  "ch6_y2_e6": {
+    "chapter": 6,
+    "title": "2년차 - 자동차",
+    "description": "자동차 구매 고민.",
+    "choices": [
+      {
+        "text": "할부 구매 (월 30만원)",
+        "color": "yellow",
+        "next": "ch6_y2_e7",
+        "effects": { "money": -5000000 }
+      }
+    ]
+  },
+  "ch6_y2_e7": {
+    "chapter": 6,
+    "title": "2년차 - 연애",
+    "description": "소개팅 기회.",
+    "choices": [
+      {
+        "text": "만나본다 (스트레스 -20)",
+        "color": "yellow",
+        "next": "ch6_y2_e8",
+        "effects": { "stress": -20, "money": -500000 }
+      }
+    ]
+  },
+  "ch6_y2_e8": {
+    "chapter": 6,
+    "title": "2년차 종료",
+    "description": "성과급 100만원! 3년차 시작!",
+    "choices": [
+      {
+        "text": "3년차!",
+        "color": "green",
+        "next": "ch6_y3_e1",
+        "effects": { "money": 1000000 }
+      }
+    ]
+  },
+  "ch6_y3_e1": {
+    "chapter": 6,
+    "title": "3년차 - 미아 찾기",
+    "description": "미아를 찾아 부모님과 재회시켰습니다.",
+    "choices": [
+      {
+        "text": "보람 (정의감 +15)",
+        "color": "green",
+        "next": "ch6_y3_e2",
+        "effects": { "justice": 15, "stress": -10 }
+      }
+    ]
+  },
+  "ch6_y3_e2": {
+    "chapter": 6,
+    "title": "3년차 - 층간소음",
+    "description": "층간소음 민원 중재.",
+    "choices": [
+      {
+        "text": "중재 성공 (인맥 +15)",
+        "color": "green",
+        "next": "ch6_y3_e3",
+        "effects": { "network": 15 }
+      }
+    ]
+  },
+  "ch6_y3_e3": {
+    "chapter": 6,
+    "title": "3년차 - 형사과 협조",
+    "description": "형사과 협조 요청.",
+    "choices": [
+      {
+        "text": "협조 (인맥 +20)",
+        "color": "green",
+        "next": "ch6_y3_e4",
+        "effects": { "network": 20 }
+      }
+    ]
+  },
+  "ch6_y3_e4": {
+    "chapter": 6,
+    "title": "3년차 - 팀장 추천",
+    "description": "팀장님이 추천해줍니다.",
+    "choices": [
+      {
+        "text": "준비 (성적 +15)",
+        "color": "green",
+        "next": "ch6_y3_e5",
+        "effects": { "grade": 15 }
+      }
+    ]
+  },
+  "ch6_y3_e5": {
+    "chapter": 6,
+    "title": "3년차 - 결혼",
+    "description": "결혼 결정. 비용 3,000만원.",
+    "choices": [
+      {
+        "text": "대출 (돈 +3,000만원)",
+        "color": "yellow",
+        "next": "ch6_y3_e6",
+        "effects": { "money": 30000000, "stress": 20 }
+      }
+    ]
+  },
+  "ch6_y3_e6": {
+    "chapter": 6,
+    "title": "3년차 - 전세",
+    "description": "전세 보증금 1억 5천.",
+    "choices": [
+      {
+        "text": "부모님 (5천만원)",
+        "color": "yellow",
+        "next": "ch6_y3_e7",
+        "effects": { "money": 50000000, "parentSpending": 50000000 }
+      }
+    ]
+  },
+  "ch6_y3_e7": {
+    "chapter": 6,
+    "title": "3년차 - 휴가",
+    "description": "스트레스 관리. 휴가?",
+    "choices": [
+      {
+        "text": "휴가 (스트레스 -30)",
+        "color": "green",
+        "next": "ch6_y3_e8",
+        "effects": { "stress": -30 }
+      }
+    ]
+  },
+  "ch6_y3_e8": {
+    "chapter": 6,
+    "title": "3년차 종료",
+    "description": "4년차 시작!",
+    "choices": [
+      {
+        "text": "4년차!",
+        "color": "green",
+        "next": "ch6_y4_e1"
+      }
+    ]
+  },
+  "ch6_y4_e1": {
+    "chapter": 6,
+    "title": "4년차 - 교통사고",
+    "description": "대형 교통사고 현장.",
+    "media": "arrest",
+    "choices": [
+      {
+        "text": "최선 (체력 -20, 정의감 +20)",
+        "color": "green",
+        "next": "ch6_y4_e2",
+        "effects": { "health": -20, "justice": 20 }
+      }
+    ]
+  },
+  "ch6_y4_e2": {
+    "chapter": 6,
+    "title": "4년차 - 경사 승진!",
+    "description": "경사 승진! 월급 260만원!",
+    "media": "promotion",
+    "choices": [
+      {
+        "text": "감사합니다!",
+        "color": "green",
+        "next": "ch6_y4_e3",
+        "effects": { "justice": 15, "stress": -20 }
+      }
+    ]
+  },
+  "ch6_y4_e3": {
+    "chapter": 6,
+    "title": "4년차 - 전출 제안",
+    "description": "교통과 스카우트.\n\n※ 1단계에서는 생활안전만 체험.",
+    "choices": [
+      {
+        "text": "🔒 교통과 (2단계 개방)",
+        "color": "red",
+        "disabled": true,
+        "disabledMessage": "2단계에서 개방"
+      },
+      {
+        "text": "생활안전 유지",
+        "color": "green",
+        "next": "ch6_y4_e4",
+        "effects": { "justice": 10 }
+      }
+    ]
+  },
+  "ch6_y4_e4": {
+    "chapter": 6,
+    "title": "4년차 - 안전 교육",
+    "description": "초등학교 안전 교육.",
+    "choices": [
+      {
+        "text": "열심히 (인맥 +20)",
+        "color": "green",
+        "next": "ch6_y4_e5",
+        "effects": { "network": 20, "justice": 10 }
+      }
+    ]
+  },
+  "ch6_y4_e5": {
+    "chapter": 6,
+    "title": "4년차 - 부패 유혹",
+    "description": "사업가가 뇌물 제안.",
+    "media": "crisis",
+    "choices": [
+      {
+        "text": "단호히 거절! (정의감 +20)",
+        "color": "green",
+        "next": "ch6_y4_e6",
+        "effects": { "justice": 20 }
+      }
+    ]
+  },
+  "ch6_y4_e6": {
+    "chapter": 6,
+    "title": "4년차 - 재정",
+    "description": "집 구매 가능?",
+    "choices": [
+      {
+        "text": "청약 준비",
+        "color": "green",
+        "next": "ch6_y4_e7",
+        "effects": { "stress": 10 }
+      }
+    ]
+  },
+  "ch6_y4_e7": {
+    "chapter": 6,
+    "title": "4년차 - 건강",
+    "description": "체력 저하 경고.",
+    "choices": [
+      {
+        "text": "운동 (체력 +20)",
+        "color": "green",
+        "next": "ch6_y4_e8",
+        "effects": { "health": 20 }
+      }
+    ]
+  },
+  "ch6_y4_e8": {
+    "chapter": 6,
+    "title": "4년차 종료",
+    "description": "5년차 시작!",
+    "choices": [
+      {
+        "text": "5년차!",
+        "color": "green",
+        "next": "ch6_y5_e1"
+      }
+    ]
+  },
+  "ch6_y5_e1": {
+    "chapter": 6,
+    "title": "5년차 - 선배",
+    "description": "5년차 선배가 되었습니다.",
+    "choices": [
+      {
+        "text": "뿌듯 (정의감 +15)",
+        "color": "green",
+        "next": "ch6_y5_e2",
+        "effects": { "justice": 15 }
+      }
+    ]
+  },
+  "ch6_y5_e2": {
+    "chapter": 6,
+    "title": "5년차 - 멘토링",
+    "description": "후배 멘토링.",
+    "choices": [
+      {
+        "text": "가르친다 (인맥 +20)",
+        "color": "green",
+        "next": "ch6_y5_e3",
+        "effects": { "network": 20 }
+      }
+    ]
+  },
+  "ch6_y5_e3": {
+    "chapter": 6,
+    "title": "5년차 - 특공대",
+    "description": "특공대 제안.\n\n※ 1단계 선택 불가",
+    "choices": [
+      {
+        "text": "🔒 특공대 (2단계)",
+        "color": "red",
+        "disabled": true,
+        "disabledMessage": "2단계 개방"
+      },
+      {
+        "text": "생활안전 유지",
+        "color": "green",
+        "next": "ch6_y5_e4"
+      }
+    ]
+  },
+  "ch6_y5_e4": {
+    "chapter": 6,
+    "title": "5년차 - 평가",
+    "description": "5년 평가.",
+    "choices": [
+      {
+        "text": "확인",
+        "color": "green",
+        "next": "ch6_y5_e5"
+      }
+    ]
+  },
+  "ch6_y5_e5": {
+    "chapter": 6,
+    "title": "5년차 - 주택",
+    "description": "아파트 3억원.",
+    "choices": [
+      {
+        "text": "구매 (대출)",
+        "color": "yellow",
+        "next": "ch6_y5_e6",
+        "effects": { "money": -100000000 }
+      }
+    ]
+  },
+  "ch6_y5_e6": {
+    "chapter": 6,
+    "title": "5년차 - 워라밸",
+    "description": "가족 시간.",
+    "choices": [
+      {
+        "text": "가족 우선 (스트레스 -20)",
+        "color": "green",
+        "next": "ch6_y5_e7",
+        "effects": { "stress": -20 }
+      }
+    ]
+  },
+  "ch6_y5_e7": {
+    "chapter": 6,
+    "title": "5년차 - 경위 시험",
+    "description": "경위 준비.",
+    "choices": [
+      {
+        "text": "준비 (성적 +20)",
+        "color": "green",
+        "next": "ch6_final",
+        "effects": { "grade": 20 }
+      }
+    ]
+  },
+  "ch6_final": {
+    "chapter": 6,
+    "title": "5년 완료!",
+    "description": "5년 경찰 생활 완료!\n\n생활안전 부서에서 지역을 지켰습니다.",
+    "media": "ending",
+    "choices": [
+      {
+        "text": "엔딩 보기",
+        "color": "green",
+        "next": "career_choice"
+      }
+    ]
+  },
+  "career_choice": {
+    "chapter": 6,
+    "title": "🔀 진로 선택",
+    "description": "※ 1단계에서는 생활안전만 완료 가능\n※ 다른 직군은 2단계 개방",
+    "choices": [
+      {
+        "text": "✅ 생활안전 팀장 (엔딩)",
+        "color": "green",
+        "next": "ending_final"
+      },
+      {
+        "text": "🔒 형사 (2단계)",
+        "color": "red",
+        "disabled": true,
+        "disabledMessage": "2단계 개방"
+      },
+      {
+        "text": "🔒 교통 (2단계)",
+        "color": "red",
+        "disabled": true,
+        "disabledMessage": "2단계 개방"
+      }
+    ]
+  },
+  "ending_final": {
+    "chapter": 6,
+    "title": "🎉 게임 완료!",
+    "description": "\"나는 경찰이다\" 1단계 완료!\n\n생활안전 경찰 직군 체험을 마쳤습니다.\n\n※ 2단계에서는 다른 직군도 체험 가능합니다.\n\n감사합니다!",
+    "media": "ending",
+    "choices": [
+      {
+        "text": "처음부터 다시",
+        "color": "green",
+        "next": "start"
+      }
+    ]
+  }
+}
